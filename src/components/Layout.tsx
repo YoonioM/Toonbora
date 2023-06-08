@@ -10,7 +10,7 @@ export default function Layout({ children }: { children?: React.ReactNode}) {
     return (
         <View className="flex flex-1 bg-fuchsia-200">
             { route.name === 'Home' || !route ? <Nav/> : '' }
-            <View className="justify-center flex-1 bg-orange-300">
+            <View className="justify-center flex-1 bg-slate-100">
                 {children}
             </View>
             <Footer />
