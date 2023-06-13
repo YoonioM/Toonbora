@@ -1,5 +1,5 @@
-import Nav from "./Nav/Nav";
-import Footer from "./Footer/Footer";
+import Nav from "./Nav";
+import Footer from "./Footer";
 import { View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 

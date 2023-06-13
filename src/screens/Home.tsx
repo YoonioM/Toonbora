@@ -1,7 +1,7 @@
 import { ScrollView, Text, View } from "react-native";
 import Layout from "../components/Layout";
 import { NavigationProp } from "@react-navigation/native";
-import IParamList from "../Models/Interface/IParamList";
+import IParamList from "../models/interface/IParamList";
 
 const dummy = [
     "", "", "", "", "", "", "",
