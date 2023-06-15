@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native';
 import Home from '../screens/Home';
-import { Dimensions, useWindowDimensions } from 'react-native';
+import { Dimensions, useWindowDimensions, Platform, StatusBar } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import orientationState from '../recoil/atom/orientationState';
 import Viewer from '../screens/Viewer';
@@ -14,7 +14,9 @@ export default function Navigator() {
     const windowHeight = useWindowDimensions().height;
     useEffect(() => {
         const { width, height } = Dimensions.get('window');
-        setOrientation(width > height);
+        const isLandscape = width > height;
+        Platform.OS === 'android' && StatusBar.setHidden(isLandscape);
+        setOrientation(isLandscape);
     }, [windowHeight]);
 
     return (
