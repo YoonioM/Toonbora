@@ -1,33 +1,37 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
-import Icon from 'react-native-vector-icons/Ionicons'
 
 type Props = {
-    backButtonText?: string
+    leftButton?: React.JSX.Element
     title?: string
-    navigation?: any
+    rightButton?: React.JSX.Element
 }
 
-const Nav = (props: Props) => {
+const Nav = ({ leftButton, title, rightButton }: Props) => {
     return (
         <View
-        className='justify-center px-2 shadow-xl bg-red-200'
-        style={{height: '5%'}}
+        className='flex-row w-full items-end justify-between px-5 pb-3 z-50 bg-slate-50'
+        style={{
+            height: '9%',
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 1,
+            },
+            shadowOpacity: 0.22,
+            shadowRadius: 2.22,
+            elevation: 3,
+        }}
         >
-            <View
-                className='flex-row'>
-                <TouchableOpacity
-                onPress={() => {
-                    if(props.navigation){
-                        props.navigation.pop()
-                    }
-                    }}>
-                    <Icon name='chevron-back-outline' size={25}/>
-                </TouchableOpacity>
-                <Text
-                className='mx-1 text-lg'
-                >
-                {props.backButtonText}
+            <View className=''>
+                    {leftButton}
+            </View>
+            <View>
+                <Text className='text-center text-base text-purple-600'>{title}</Text>
+            </View>
+            <View className=''>
+                <Text>
+                    {rightButton}
                 </Text>
             </View>
         </View>
