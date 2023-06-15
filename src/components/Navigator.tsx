@@ -21,9 +21,9 @@ export default function Navigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Home'>
-            <Stack.Group screenOptions={{headerShown: false}}>
-                <Stack.Screen name='Home' component={Home} />
-            </Stack.Group>
+              <Stack.Group screenOptions={{headerShown: false}}>
+                  <Stack.Screen name='Home' component={Home} />
+              </Stack.Group>
             </Stack.Navigator>
         </NavigationContainer>
     )
