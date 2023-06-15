@@ -10,7 +10,7 @@ type Props = {
 const Nav = ({ leftButton, title, rightButton }: Props) => {
     return (
         <View
-        className='flex-row w-full items-end justify-between px-5 pb-3 z-50 bg-slate-50'
+        className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'
         style={{
             height: '9%',
             shadowColor: "#000",
@@ -23,16 +23,17 @@ const Nav = ({ leftButton, title, rightButton }: Props) => {
             elevation: 3,
         }}
         >
-            <View className=''>
-                    {leftButton}
+            <View className='absolute flex-row w-full pb-1.5 px-5 items-center justify-between'>
+                <View className=''>
+                        {leftButton}
+                </View>
+                <View className=''>
+                        {rightButton}
+                </View>
             </View>
-            <View>
+
+            <View className='mx-auto'>
                 <Text className='text-center text-base text-purple-600'>{title}</Text>
-            </View>
-            <View className=''>
-                <Text>
-                    {rightButton}
-                </Text>
             </View>
         </View>
     )
