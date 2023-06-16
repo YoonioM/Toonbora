@@ -1,7 +1,9 @@
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
+import Icon from 'react-native-vector-icons/Ionicons'
 import IParamList from "../models/interface/IParamList";
 import Nav from "../components/Nav";
+
 
 const dummy = [
     "", "", "", "", "", "", "",
@@ -16,27 +18,43 @@ const dummy = [
 
 export default function Home({ navigation }: { navigation: NavigationProp<IParamList> }) {
 
-    const leftButton = () => {
-        return (
+    const leftButton = 
             <TouchableOpacity
             onPress={() => {
 
             }}>
-
+                <Icon name='ios-add' size={25} color='#9333ea'/>
             </TouchableOpacity>
-        )
-    }
+
+    const rightButton = 
+            <TouchableOpacity
+            onPress={() => {
+
+            }}>
+                <Icon name='ellipsis-vertical-outline' size={20} color='#9333ea'/>
+            </TouchableOpacity>
 
     return (
-        <SafeAreaView>
-            <Nav backButtonText="응애"/>
+        <View className='bg-slate-50'>
+            <Nav title="서재" leftButton={leftButton} rightButton={rightButton}/>
                 <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center'}}>
                     {dummy.map((item: any, idx: number) => (
-                    <View key={idx} className="flex w-36 h-52 m-5 bg-slate-400">
+                    <View key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
+                    style={{
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 1,
+                        },
+                        shadowOpacity: 0.22,
+                        shadowRadius: 2.22,
+
+                        elevation: 3,
+                    }}>
                         <Text>스켈레톤</Text>
                     </View>
                     ))}
                 </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }
