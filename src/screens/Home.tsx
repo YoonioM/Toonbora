@@ -3,9 +3,9 @@ import { NavigationProp } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons'
 import IParamList from "../models/interface/IParamList";
 import Nav from "../components/Nav";
-import RNFS from 'react-native-fs'
-import DocumentPicker from 'react-native-document-picker'
+
 import IBook from "../models/interface/IBook";
+import useBook from "../hooks/useBook";
 
 
 const dummy: IBook[]= [
@@ -39,11 +39,6 @@ const dummy: IBook[]= [
     }
 ]
 
-type dummyob = {
-    name: string
-    uri: string
-}
-
 /**
  * 
  * ===== TODO =====
@@ -53,29 +48,11 @@ type dummyob = {
 
 export default function Home({ navigation }: { navigation: NavigationProp<IParamList> }) {
 
-
+    const {books, addBook} = useBook()
 
     const leftButton = 
             <TouchableOpacity
-            onPress={() => {
-                DocumentPicker.pickDirectory()
-                .then(result => {
-                    console.log(result?.uri)
-                    console.log(RNFS.MainBundlePath)
-                    const selectedPath = result?.uri.substring(7, result.uri.length)
-                    let pathNameList = selectedPath?.split('/')
-                    let pathName = pathNameList[pathNameList.length-2]
-                    console.log(selectedPath)
-                    console.log(pathName)
-                    RNFS.readDir(selectedPath)
-                    .then(res => {
-                        console.log(res)
-                    })
-                })
-                .catch(error => {
-                    Alert.alert(`${error}`)
-                })
-            }}>
+            onPress={() => addBook()}>
                 <Icon name='ios-add' size={25} color='#9333ea'/>
             </TouchableOpacity>
 
@@ -90,8 +67,8 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
     return (
         <View className='h-full bg-slate-50'>
             <Nav title="서재" leftButton={leftButton} rightButton={rightButton}/>
-                <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center'}}>
-                    {dummy.map((item: IBook, idx: number) => (
+                <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}>
+                    {books.map((item: IBook, idx: number) => (
                     <TouchableOpacity
                     key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
                     style={{
