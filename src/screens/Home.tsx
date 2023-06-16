@@ -1,8 +1,10 @@
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons'
 import IParamList from "../models/interface/IParamList";
 import Nav from "../components/Nav";
+import RNFS from 'react-native-fs'
+import DocumentPicker from 'react-native-document-picker'
 
 
 const dummy = [
@@ -21,7 +23,15 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
     const leftButton = 
             <TouchableOpacity
             onPress={() => {
-
+                DocumentPicker.pickDirectory()
+                .then(result => {
+                    console.log(result.uri)
+                    RNFS.readDir(result.uri)
+                    .then(res => console.log(res))
+                })
+                .catch(error => {
+                    Alert.alert(`${error}`)
+                })
             }}>
                 <Icon name='ios-add' size={25} color='#9333ea'/>
             </TouchableOpacity>
