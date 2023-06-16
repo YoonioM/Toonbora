@@ -5,11 +5,44 @@ import IParamList from "../models/interface/IParamList";
 import Nav from "../components/Nav";
 import RNFS from 'react-native-fs'
 import DocumentPicker from 'react-native-document-picker'
+import IBook from "../models/interface/IBook";
 
 
-const dummy = [
-    "", "", "", "", "", "", "",
+const dummy: IBook[]= [
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    },
+    {
+        name: 'asd',
+        uri: 'asd'
+    }
 ]
+
+type dummyob = {
+    name: string
+    uri: string
+}
 
 /**
  * 
@@ -20,14 +53,24 @@ const dummy = [
 
 export default function Home({ navigation }: { navigation: NavigationProp<IParamList> }) {
 
+
+
     const leftButton = 
             <TouchableOpacity
             onPress={() => {
                 DocumentPicker.pickDirectory()
                 .then(result => {
-                    console.log(result.uri)
-                    RNFS.readDir(result.uri)
-                    .then(res => console.log(res))
+                    console.log(result?.uri)
+                    console.log(RNFS.MainBundlePath)
+                    const selectedPath = result?.uri.substring(7, result.uri.length)
+                    let pathNameList = selectedPath?.split('/')
+                    let pathName = pathNameList[pathNameList.length-2]
+                    console.log(selectedPath)
+                    console.log(pathName)
+                    RNFS.readDir(selectedPath)
+                    .then(res => {
+                        console.log(res)
+                    })
                 })
                 .catch(error => {
                     Alert.alert(`${error}`)
@@ -45,11 +88,12 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
             </TouchableOpacity>
 
     return (
-        <View className='bg-slate-50'>
+        <View className='h-full bg-slate-50'>
             <Nav title="서재" leftButton={leftButton} rightButton={rightButton}/>
                 <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center'}}>
-                    {dummy.map((item: any, idx: number) => (
-                    <View key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
+                    {dummy.map((item: IBook, idx: number) => (
+                    <TouchableOpacity
+                    key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
                     style={{
                         shadowColor: "#000",
                         shadowOffset: {
@@ -60,9 +104,12 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
                         shadowRadius: 2.22,
 
                         elevation: 3,
+                    }}
+                    onPress = {() => {
+                        navigation.navigate('BookList')
                     }}>
-                        <Text>스켈레톤</Text>
-                    </View>
+                        <Text>{item.name}</Text>
+                    </TouchableOpacity>
                     ))}
                 </ScrollView>
         </View>
