@@ -5,6 +5,7 @@ import Home from '../screens/Home';
 import { Dimensions, useWindowDimensions, Platform, StatusBar } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import orientationState from '../recoil/atom/orientationState';
+import BookList from '../screens/BookList';
 import Viewer from '../screens/Viewer';
 
 const Stack = createNativeStackNavigator();
@@ -22,10 +23,11 @@ export default function Navigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Home'>
-            <Stack.Group screenOptions={{headerShown: false}}>
-                <Stack.Screen name='Home' component={Home} />
-                <Stack.Screen name='Viewer' component={Viewer} />
-            </Stack.Group>
+              <Stack.Group screenOptions={{headerShown: false}}>
+                  <Stack.Screen name='Home' component={Home} />
+                  <Stack.Screen name='BookList' component={BookList} />
+                  <Stack.Screen name='Viewer' component={Viewer} />
+              </Stack.Group>
             </Stack.Navigator>
         </NavigationContainer>
     )
