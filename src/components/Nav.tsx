@@ -12,7 +12,7 @@ const Nav = ({ leftButton, title, rightButton }: Props) => {
         <View
         className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'
         style={{
-            height: '9%',
+            height: 40,
             shadowColor: "#000",
             shadowOffset: {
                 width: 0,

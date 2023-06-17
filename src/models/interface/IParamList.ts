@@ -1,5 +1,9 @@
-export default interface IParamList {
+import { ParamListBase } from "@react-navigation/native";
+
+export default interface IParamList extends ParamListBase {
     Home: undefined;
-    Viewer: undefined;
+    Viewer: {
+        dirPath: string;
+    };
     BookList: undefined;
 }
