@@ -25,7 +25,7 @@ export default function Navigator() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName='Viewer'>
+            <Stack.Navigator initialRouteName='Home'>
             <Stack.Group screenOptions={{headerShown: false}}>
                 <Stack.Screen name='Home' component={Home} />
                 <Stack.Screen name='BookList' component={BookList} />
