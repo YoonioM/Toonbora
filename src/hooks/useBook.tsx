@@ -37,18 +37,15 @@ const useBook = () => {
     const addBook = () => {
         DocumentPicker.pickDirectory()
         .then(result => {
-            console.log(result?.uri)
-            console.log(RNFS.MainBundlePath)
-            const selectedPath = result?.uri.substring(7, result.uri.length)
+            const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string)
             let pathNameList = selectedPath!.split('/')
-            let pathName = pathNameList![pathNameList!.length-2]
-            console.log(selectedPath)
-            console.log(pathName)
+            let pathName = decodeURIComponent(pathNameList![pathNameList!.length-2])
             setBooks(val => {
                 let newVal = [...val]
                 newVal.push({
-                    name: pathName,
-                    uri: selectedPath as string
+                    name: pathName as string,
+                    uri: selectedPath as string,
+                    progress: undefined
                 })
                 saveBooks(JSON.stringify(newVal))
                 return newVal

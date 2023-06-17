@@ -68,7 +68,7 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
         <View className='h-full bg-slate-50'>
             <Nav title="서재" leftButton={leftButton} rightButton={rightButton}/>
                 <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}>
-                    {books.map((item: IBook, idx: number) => (
+                    {books.map((book: IBook, idx: number) => (
                     <TouchableOpacity
                     key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
                     style={{
@@ -83,9 +83,9 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
                         elevation: 3,
                     }}
                     onPress = {() => {
-                        navigation.navigate('BookList')
+                        navigation.navigate('BookList', {book})
                     }}>
-                        <Text>{item.name}</Text>
+                        <Text>{book.name}</Text>
                     </TouchableOpacity>
                     ))}
                 </ScrollView>
