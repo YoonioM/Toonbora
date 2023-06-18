@@ -1,43 +1,69 @@
-import { Dimensions, FlatList, Image, StatusBar, View } from "react-native";
+import { Dimensions, FlatList, Image, StatusBar, View, ViewToken } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Nav from "../components/Nav";
 import { TouchableOpacity } from "react-native";
 import { Text } from "react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ViewerFooter from "../components/ViewerFooter";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import orientationState from "../recoil/atom/orientationState";
 import RNFS from 'react-native-fs';
 import IParamList from "../models/interface/IParamList";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { currentPageState, totalPageState } from "../recoil/atom/viewerState";
 
 interface IImgFile {
     id: number;
-    fileName: string;
+    fileName?: string;
+    paddingItem?: boolean;
 }
 
 export default function Viewer() {
     const route = useRoute<RouteProp<IParamList, "Viewer">>();
-    const dirPath = route.params.dirPath;
+    const dirPath = route.params ? route.params.dirPath : RNFS.DocumentDirectoryPath + '/manwa';
+    const navigation = useNavigation<NavigationProp<IParamList>>();
+    const setTotalPage = useSetRecoilState(totalPageState);
     const [navOpen, setNavOpen] = useState(true);
     const [imgs, setImgs] = useState<IImgFile[]>([]);
     const isLandscape = useRecoilValue(orientationState);
     const { width: deviceWidth } = Dimensions.get('window');
+    const setCurrentPage = useSetRecoilState(currentPageState);
+
+    const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
+        if (viewableItems.length > 0) {
+            const currentKey = viewableItems[0].item.id as number;
+            setCurrentPage(currentKey + 1);
+        }
+    }, [route]);
 
     useEffect(() => {
+        const allowedExtensions = new Set(['.jpg', '.jpeg', '.png', '.bmp', '.webp']);
         RNFS.readDir(dirPath).then( result => {
-            setImgs(result.map((file, i) => { return { id: i, fileName: file.name } }));
-        })
-        console.log(imgs);
-    }, []);
+            const newImgs: IImgFile[] = [{ id: 0, paddingItem: true }];
+            result
+                .filter(file => {
+                    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLocaleLowerCase();
+                    return allowedExtensions.has(fileExtension);
+                })
+                .forEach((file, i) => newImgs.push({ id: i + 1, fileName: file.name }));
+            newImgs.push({ id: newImgs.length, paddingItem: true });
+            setImgs(newImgs);
+            setTotalPage(newImgs.length - 2);
+        });
+    }, [route]);
 
     const imageItem = ({ item }: {item: IImgFile}) => {
-        return <Image source={ { uri: `${dirPath}/${item.fileName}`} } style={ { width: deviceWidth, height: deviceWidth} } />
+        return item.paddingItem
+        ? <View style={{ width: '100%', height: StatusBar.currentHeight || 0 + 100 }}/>
+        : <Image source={ { uri: `${dirPath}/${item.fileName}`} } style={ { width: deviceWidth, height: deviceWidth} } />
     }
 
     const leftButton = (
-        <TouchableOpacity>
-            <Text className='font-bold text-purple-600'>터치확인</Text>
+        <TouchableOpacity onPress={() => {
+            navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Home');
+        }}>
+            <Icon name='chevron-left' size={20} color='#9333ea'></Icon>
         </TouchableOpacity>
     );
 
@@ -53,8 +79,9 @@ export default function Viewer() {
     return (
         <>
             <FlatList
-                data={ imgs } renderItem={ imageItem } keyExtractor={(item) => item.id.toString()}
-                className='bg-white h-full' style={ { paddingTop: StatusBar.currentHeight || 0 + 100, paddingBottom: 200 } }
+                data={ imgs } renderItem={ imageItem } keyExtractor={(item) => item.id.toString()} showsHorizontalScrollIndicator={false}
+                onViewableItemsChanged={onViewableItemsChanged}
+                className='bg-white h-full'
             />
             { navOpen && (
                 <>
