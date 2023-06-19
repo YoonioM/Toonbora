@@ -1,10 +1,10 @@
 import { Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
-import viewerSelecor from "../recoil/selector/viewerSelector";
+import viewerSelector from "../recoil/selector/viewerSelector";
 
 export default function ViewerFooter() {
 
-    const viewerState = useRecoilValue(viewerSelecor);
+    const viewerState = useRecoilValue(viewerSelector);
 
     return (
         <>

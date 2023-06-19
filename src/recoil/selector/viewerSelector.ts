@@ -7,8 +7,8 @@ export interface IViewerState {
     totalPage: number;
 }
 
-const viewerSelecor = selector({
-    key: 'viewerSelecor',
+const viewerSelector = selector({
+    key: 'viewerSelector',
     get: ({ get }): IViewerState => {
         const viewerState: IViewerState = {
             scrollMode: get(scrollModeState),
@@ -19,4 +19,4 @@ const viewerSelecor = selector({
     },
 })
 
-export default viewerSelecor;
+export default viewerSelector;
