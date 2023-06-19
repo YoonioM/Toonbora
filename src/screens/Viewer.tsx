@@ -31,10 +31,9 @@ export default function Viewer() {
     const setCurrentPage = useSetRecoilState(currentPageState);
 
     const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
-        if (viewableItems.length > 0) {
-            const currentKey = viewableItems[0].item.id as number;
-            setCurrentPage(currentKey + 1);
-        }
+        if (viewableItems.length < 1) return;
+        const currentKey = viewableItems[0].item.id as number;
+        setCurrentPage(currentKey + 1);
     }, [route]);
 
     useEffect(() => {
