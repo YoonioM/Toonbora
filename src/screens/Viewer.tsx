@@ -1,9 +1,9 @@
-import { Dimensions, FlatList, Image, StatusBar, View, ViewToken } from "react-native";
+import { Dimensions, FlatList, Image, StatusBar, View, ViewToken, ViewabilityConfigCallbackPairs } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Nav from "../components/Nav";
 import { TouchableOpacity } from "react-native";
 import { Text } from "react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ViewerFooter from "../components/ViewerFooter";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import orientationState from "../recoil/atom/orientationState";
@@ -30,11 +30,18 @@ export default function Viewer() {
     const { width: deviceWidth } = Dimensions.get('window');
     const setCurrentPage = useSetRecoilState(currentPageState);
 
-    const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
+    const onViewableItemsChanged = ({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
         if (viewableItems.length < 1) return;
         const currentKey = viewableItems[0].item.id as number;
-        setCurrentPage(currentKey + 1);
-    }, [route]);
+        setCurrentPage(currentKey || 1);
+    };
+
+    const viewabilityConfigCallbackPairs = useRef<ViewabilityConfigCallbackPairs>([
+        { 
+            viewabilityConfig: { viewAreaCoveragePercentThreshold: 95 },
+            onViewableItemsChanged: onViewableItemsChanged 
+        },
+    ]);
 
     useEffect(() => {
         const allowedExtensions = new Set(['.jpg', '.jpeg', '.png', '.bmp', '.webp']);
@@ -78,8 +85,10 @@ export default function Viewer() {
     return (
         <>
             <FlatList
-                data={ imgs } renderItem={ imageItem } keyExtractor={(item) => item.id.toString()} showsHorizontalScrollIndicator={false}
-                onViewableItemsChanged={onViewableItemsChanged}
+                data={ imgs } 
+                renderItem={ imageItem } 
+                keyExtractor={(item) => item.id.toString()} showsHorizontalScrollIndicator={false}
+                viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 className='bg-white h-full'
             />
             { navOpen && (
