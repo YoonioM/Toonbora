@@ -21,7 +21,7 @@ interface IImgFile {
 
 export default function Viewer() {
     const route = useRoute<RouteProp<IParamList, "Viewer">>();
-    const dirPath = route.params ? route.params.dirPath : RNFS.DocumentDirectoryPath + '/manwa';
+    const dirPath = route.params.dirPathList[route.params.dirIdx];
     const navigation = useNavigation<NavigationProp<IParamList>>();
     const setTotalPage = useSetRecoilState(totalPageState);
     const [navOpen, setNavOpen] = useState(true);
