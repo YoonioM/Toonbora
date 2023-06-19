@@ -4,4 +4,14 @@ import { atom } from "recoil";
 export const scrollModeState = atom<boolean>({
     key: 'scrollModeState',
     default: true
-})
+});
+
+export const currentPageState = atom<number>({
+    key: 'currentPageState',
+    default: 0
+});
+
+export const totalPageState = atom<number>({
+    key: 'totalPageState',
+    default: 0
+});
