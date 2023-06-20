@@ -21,15 +21,7 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
       <View
       className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'
       style={{
-          height: 80,
-          shadowColor: "#000",
-          shadowOffset: {
-              width: 0,
-              height: 1,
-          },
-          shadowOpacity: 0.22,
-          shadowRadius: 2.22,
-          elevation: 3,
+          height: 40,
       }}
       >
           <View className='absolute flex-row w-full pb-1.5 px-5 items-center justify-between'>
@@ -45,6 +37,20 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
           </View>
       </View>
       {visibleMenu && <Menu menus={menus}/>}
+      <View 
+      className='z-50'
+      style={{
+          height: 1,
+          shadowColor: "#000",
+          shadowOffset: {
+              width: 0,
+              height: 1,
+          },
+          shadowOpacity: 0.22,
+          shadowRadius: 2.22,
+          elevation: 3,
+        }}>
+          </View>
     </>
   )
 }

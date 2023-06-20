@@ -5,7 +5,7 @@ import Home from '../screens/Home';
 import { Dimensions, useWindowDimensions, Platform, StatusBar } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import orientationState from '../recoil/atom/orientationState';
-import BookList from '../screens/BookList';
+import EpisodeList from '../screens/EpisodeList';
 import Viewer from '../screens/Viewer';
 import IParamList from '../models/interface/IParamList';
 
@@ -28,7 +28,7 @@ export default function Navigator() {
             <Stack.Navigator initialRouteName='Home'>
             <Stack.Group screenOptions={{headerShown: false}}>
                 <Stack.Screen name='Home' component={Home} />
-                <Stack.Screen name='BookList' component={BookList} />
+                <Stack.Screen name='EpisodeList' component={EpisodeList} />
                 <Stack.Screen name='Viewer' component={Viewer} />
             </Stack.Group>
             </Stack.Navigator>

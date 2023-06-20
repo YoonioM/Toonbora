@@ -25,6 +25,7 @@ const useBook = () => {
     const [books, setBooks] = useState<IBook[]>([])
 
     const getBooks = async () => {
+      console.log(DocumentDirectoryPath)
         const localBooks = await AsyncStorage.getItem(AsyncKey.Books)
         if(localBooks != null){
             setBooks(JSON.parse(localBooks))
@@ -47,7 +48,7 @@ const useBook = () => {
         // })
     }
 
-    const getThumbnail = () => {
+    const searchThumbnail = () => {
         axios.get('https://dapi.kakao.com/v2/search/image')
     }
 
@@ -58,6 +59,7 @@ const useBook = () => {
     const addBook = () => {
         DocumentPicker.pickDirectory()
         .then(result => {
+          console.log(result)
             const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string)
             let pathNameList = selectedPath!.split('/')
             let pathName = decodeURIComponent(pathNameList![pathNameList!.length-2])
@@ -77,12 +79,13 @@ const useBook = () => {
         })
     }
 
-    const deleteBook = (bookNumbers: number[]) => {
+    const deleteBook = async (bookNumbers: number[]) => {
       setBooks(val => {
         const newVal = val.filter((_, index) => !bookNumbers.includes(index));
         saveBooks(JSON.stringify(newVal))
         return newVal
       })
+      return ''
     }
 
     useEffect(() => {

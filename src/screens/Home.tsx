@@ -1,9 +1,8 @@
-import { Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/Ionicons'
 import IParamList from "../models/interface/IParamList";
 import Nav from "../components/Nav";
-import CheckBox from '@react-native-community/checkbox';
 
 import IBook from "../models/interface/IBook";
 import useBook from "../hooks/useBook";
@@ -12,6 +11,7 @@ import { useSetRecoilState } from "recoil";
 import { visibleMenuState } from "../recoil/atom/navState";
 import IMenu from "../models/interface/Imenu";
 import Footer from "../components/Footer";
+import Book from "../components/Book";
 
 /**
  * 
@@ -24,7 +24,7 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
 
   const {books, addBook, deleteBook} = useBook()
   const [isDelete, setIsDelete] = useState(false)
-  const [selectedBookNumbers, setSelectedBookNumbers] = useState([])
+  const [selectedBookNumbers, setSelectedBookNumbers] = useState<number[]>([])
 
   const setVisibleMenu = useSetRecoilState(visibleMenuState)
 
@@ -46,7 +46,11 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
   <TouchableOpacity
   onPress={() => {
     Alert.alert('선택한 책을 지우시겠습니까?')
-      addBook()
+    deleteBook(selectedBookNumbers)
+    .then(() => {
+      setSelectedBookNumbers([])
+      setIsDelete(false)
+    })
     }}>
     <Text className="text-center text-base text-red-500">삭제</Text>
   </TouchableOpacity>
@@ -70,9 +74,15 @@ const menus: IMenu[] = [
   }
 ]
 
+const renderItem = ({item, index}: any) => {
+  return(
+    <Book book={item} idx={index} isDelete={isDelete} setSelectedBookNumbers={setSelectedBookNumbers}/>
+  )
+}
+
   return (
     // <View className='h-full bg-slate-50'>
-    <View className='h-full bg-slate-50'>
+    <SafeAreaView className='h-full bg-slate-50'>
       {isDelete
       // 편집버튼 클릭 시
       ?
@@ -80,34 +90,17 @@ const menus: IMenu[] = [
       :
       <Nav title="서재" leftButton={leftButton} rightButton={rightButton} menus={menus}/>
       }
-      
-      
-        <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}>
-          {books.map((book: IBook, idx: number) => (
-          <>
-          <TouchableOpacity
-          key={idx} className="flex w-36 h-52 m-5 bg-slate-400"
-          style={{
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 1,
-            },
-            shadowOpacity: 0.22,
-            shadowRadius: 2.22,
-
-            elevation: 3,
-          }}
-          onPress = {() => {
-            navigation.navigate('BookList', {book})
-          }}
-          >
-            <Text>{book.name}</Text>
-            <CheckBox/>
-          </TouchableOpacity>
-          </>
-          ))}
-        </ScrollView>
-    </View>
+      {/* <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}>
+        {books.map((book: IBook, idx: number) => (
+          <Book book={book} idx={idx} isDelete={isDelete} setSelectedBookNumbers={setSelectedBookNumbers}/>
+        ))} */}
+      {/* </ScrollView> */}
+      <FlatList
+        contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}
+        data={books}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => String(index)}
+      />
+    </SafeAreaView>
   )
 }

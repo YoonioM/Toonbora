@@ -42,7 +42,13 @@ export default function BookList({ navigation }: { navigation: NavigationProp<IP
 
   const renderItem = ({item}: any) => {
     return(
-        <TouchableOpacity className="w-full">
+        <TouchableOpacity className="w-full"
+        onPress={() => {
+          console.log(item.name)
+          for(let path of item.imagepath){
+            console.log(path.name)
+          }
+        }}>
             <View className="flex-row items-center">
                 <View className="flex w-10 h-16 m-5 bg-slate-400"
                 style={{
@@ -75,7 +81,7 @@ export default function BookList({ navigation }: { navigation: NavigationProp<IP
   }, [])
 
   return (
-      <View className='h-full bg-slate-50'>
+      <SafeAreaView className='h-full bg-slate-50'>
         <Nav title={book.name} leftButton={leftButton}/>
           { episodes 
               ?
@@ -116,6 +122,6 @@ export default function BookList({ navigation }: { navigation: NavigationProp<IP
                   <ActivityIndicator color='9341F9' size='large' className="m-auto mt-14"/>
               </View>}
               
-      </View>
+      </SafeAreaView>
   )
 }
