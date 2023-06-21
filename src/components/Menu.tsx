@@ -1,17 +1,19 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import IMenu from '../models/interface/Imenu';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { visibleMenuState } from '../recoil/atom/navState';
 import Icon from 'react-native-vector-icons/Ionicons';
+import orientationState from '../recoil/atom/orientationState';
 
 const Menu = ({menus}: {menus: IMenu[]}) => {
 
   const setVisibleMenu = useSetRecoilState(visibleMenuState);
+  const orientation = useRecoilValue(orientationState)
 
   return (
     <>
-    <View className='absolute right-3 top-24 w-40 h-48 rounded-md bg-slate-50 z-20'
+    <View className={`absolute w-40 h-48 ${orientation ? 'top-14 right-16' : 'top-24 right-5'} rounded-md bg-slate-50 z-20`}
     style={{
       shadowColor: "#000",
       shadowOffset: {

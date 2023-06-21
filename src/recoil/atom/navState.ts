@@ -5,3 +5,8 @@ export const visibleMenuState= atom<boolean>({
     key: 'visibleMenuState',
     default: false
 });
+
+export const currentMenuState= atom<string>({
+  key: 'currentMenuState',
+  default: 'default'
+});

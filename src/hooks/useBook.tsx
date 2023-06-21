@@ -9,18 +9,8 @@ import axios from 'axios'
 import { KAKAO_REST_API_KEY } from '@env'
 
 /**
- * =====
- * {
- *  name: string
- *  uri: string
- * }
+ * 중복방지?
  * 
- * 
- */
-
-/**
- * 
- * @returns 
  */
 const useBook = () => {
     const [books, setBooks] = useState<IBook[]>([])
@@ -50,27 +40,26 @@ const useBook = () => {
         // })
     }
 
-    const searchThumbnail = () => {
-        axios.get('https://dapi.kakao.com/v2/search/image')
-    }
-
     const saveBooks = async (book: string) => {
-        await AsyncStorage.setItem(AsyncKey.Books, book)
+        AsyncStorage.setItem(AsyncKey.Books, book)
+        .catch(err => console.error(err));
     }
 
     const addBook = () => {
         DocumentPicker.pickDirectory()
-        .then(result => {
+        .then(async result => {
           console.log(result)
             const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string)
             let pathNameList = selectedPath!.split('/')
             let pathName = decodeURIComponent(pathNameList![pathNameList!.length-2])
+            const thumbnail = await searchThumbnail(pathName)
             setBooks(val => {
                 let newVal = [...val]
                 newVal.push({
                     name: pathName as string,
                     path: selectedPath as string,
-                    progress: undefined
+                    progress: undefined,
+                    thumbnail
                 })
                 saveBooks(JSON.stringify(newVal))
                 return newVal
@@ -84,18 +73,72 @@ const useBook = () => {
     const deleteBook = async (bookNumbers: number[]) => {
       setBooks(val => {
         const newVal = val.filter((_, index) => !bookNumbers.includes(index));
-        saveBooks(JSON.stringify(newVal))
-        return newVal
+        saveBooks(JSON.stringify(newVal));
+        return newVal;
       })
-      return ''
+      return '';
+    }
+
+
+    const searchThumbnail = async (query: string) => {
+      const {data} = await axios.get('https://dapi.kakao.com/v2/search/image', {
+        headers: {'Authorization': `KakaoAK ${KAKAO_REST_API_KEY}`},
+        params: {
+          query,
+          page: 1,
+          size: 1
+      }})
+      console.log(data)
+
+      if(data.documents[0]){
+        return data.documents[0].image_url
+      }else{
+        return null
+      }
+    }
+
+    // 썸네일을 바꾸면 리랜더링 안되는 문제 있음
+    const changeThumbnail = (idx: number) => {
+      console.log(idx)
+      Alert.prompt('표지를 찾을 검색어를 입력해 주세요.', '',
+      [
+        {
+          text: '취소', style: 'cancel'
+        },
+        {
+          text: '찾기', style: 'default',
+          onPress: async (text) => {
+            if(text != null && text.length > 0){
+              console.log(text);
+              const thumbnail = await searchThumbnail(text);
+              setBooks(val => {
+                const newVal = [...val];
+                newVal[idx].thumbnail = thumbnail;
+                saveBooks(JSON.stringify(newVal));
+                return newVal;
+              })
+            }else{
+              Alert.alert('검색어는 빈칸으로 할 수 없습니다.');
+            }
+          }
+        }
+      ],
+      'plain-text', // Optional input type: 'plain-text', 'secure-text', or 'numeric'
+      '', // Optional default value
+      'default' // Optional cancel button title)
+      );
     }
 
     useEffect(() => {
         // asyncstorage에서 북 리스트 가져오기
-        getBooks()
+        getBooks();
     }, [])
 
-    return {books, addBook, deleteBook}
+    useEffect(() => {
+      console.log('book 바뀜')
+    }, [books])
+
+    return {books, addBook, deleteBook, changeThumbnail};
 } 
 
 export default useBook
