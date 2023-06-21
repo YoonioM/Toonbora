@@ -17,21 +17,22 @@ const useEpisode = (book: IBook) => {
     const [thumbnails, setThumbnails] = useState<any>({})
 
     const getEpisodes = () => {
-        RNFS.readDir(book.path)
-        .then(async (result) => {
-            let episodes: IEpisode[] = []
-            for(let episode of result){
-                if(episode.isDirectory()){
-                    await getThumbnail(episode.path)
-                    .then(thumbnail => {
-                        episodes.push({
-                            name: episode.name,
-                            path: episode.path,
-                            thumbnail: thumbnail.path
-                        })
-                    })
-                }
-            }
+      RNFS.readDir(book.path)
+      .then(async (result) => {
+        let episodes: IEpisode[] = []
+        for(let episode of result){
+          if(episode.isDirectory()){
+            await getThumbnail(episode.path)
+            .then(thumbnail => {
+                episodes.push({
+                    name: episode.name,
+                    path: episode.path,
+                    thumbnail: thumbnail[0].path,
+                    imagepath: thumbnail
+                })
+            })
+          }
+        }
 
             const sortedArray = [...episodes].sort((a, b) => {
                 const nameA = Number(a.name.match(/\d+/g))
@@ -89,7 +90,7 @@ const useEpisode = (book: IBook) => {
         return 0 // names are equal, maintain original order
         }
     });
-        return sortedArray[0]
+        return sortedArray
     }
 
     // const getThumbnail = async (path: string, idx: string) => {

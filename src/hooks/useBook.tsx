@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import IBook from '../models/interface/IBook'
 import { AsyncKey } from '../models/enums/AsyncKey'
 import axios from 'axios'
+import { KAKAO_REST_API_KEY } from '@env'
 
 /**
  * =====
@@ -25,29 +26,31 @@ const useBook = () => {
     const [books, setBooks] = useState<IBook[]>([])
 
     const getBooks = async () => {
-        // const localBooks = await AsyncStorage.getItem(AsyncKey.Books)
-        // if(localBooks != null){
-        //     setBooks(JSON.parse(localBooks))
-        // }
+      console.log(DocumentDirectoryPath)
+      console.log(KAKAO_REST_API_KEY)
+        const localBooks = await AsyncStorage.getItem(AsyncKey.Books)
+        if(localBooks != null){
+            setBooks(JSON.parse(localBooks))
+        }
 
-        // 원하는 폴더인지 구분하는 로직 추가해야됨.
-        RNFS.readDir(DocumentDirectoryPath)
-        .then(result => {
-            const pushBooks: IBook[] = []
-            console.log(result)
-            for(let book of result){
-                if(book.isDirectory()){
-                    pushBooks.push({
-                        name: book.name,
-                        path: book.path
-                    })
-                }
-            }
-            setBooks(pushBooks)
-        })
+        // // 원하는 폴더인지 구분하는 로직 추가해야됨.
+        // RNFS.readDir(DocumentDirectoryPath)
+        // .then(result => {
+        //     const pushBooks: IBook[] = []
+        //     console.log(result)
+        //     for(let book of result){
+        //         if(book.isDirectory()){
+        //             pushBooks.push({
+        //                 name: book.name,
+        //                 path: book.path
+        //             })
+        //         }
+        //     }
+        //     setBooks(pushBooks)
+        // })
     }
 
-    const getThumbnail = () => {
+    const searchThumbnail = () => {
         axios.get('https://dapi.kakao.com/v2/search/image')
     }
 
@@ -58,27 +61,33 @@ const useBook = () => {
     const addBook = () => {
         DocumentPicker.pickDirectory()
         .then(result => {
-            // const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string)
-            // let pathNameList = selectedPath!.split('/')
-            // let pathName = decodeURIComponent(pathNameList![pathNameList!.length-2])
-            // setBooks(val => {
-            //     let newVal = [...val]
-            //     newVal.push({
-            //         name: pathName as string,
-            //         path: selectedPath as string,
-            //         progress: undefined
-            //     })
-            //     saveBooks(JSON.stringify(newVal))
-            //     return newVal
-            // })
+          console.log(result)
+            const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string)
+            let pathNameList = selectedPath!.split('/')
+            let pathName = decodeURIComponent(pathNameList![pathNameList!.length-2])
+            setBooks(val => {
+                let newVal = [...val]
+                newVal.push({
+                    name: pathName as string,
+                    path: selectedPath as string,
+                    progress: undefined
+                })
+                saveBooks(JSON.stringify(newVal))
+                return newVal
+            })
         })
         .catch(error => {
             Alert.alert(`${error}`)
         })
     }
 
-    const deleteBook = () => {
-
+    const deleteBook = async (bookNumbers: number[]) => {
+      setBooks(val => {
+        const newVal = val.filter((_, index) => !bookNumbers.includes(index));
+        saveBooks(JSON.stringify(newVal))
+        return newVal
+      })
+      return ''
     }
 
     useEffect(() => {
@@ -86,7 +95,7 @@ const useBook = () => {
         getBooks()
     }, [])
 
-    return {books, addBook}
+    return {books, addBook, deleteBook}
 } 
 
 export default useBook
