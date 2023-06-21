@@ -45,12 +45,25 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
   const deleteLeftButton = 
   <TouchableOpacity
   onPress={() => {
-    Alert.alert('선택한 책을 지우시겠습니까?')
-    deleteBook(selectedBookNumbers)
-    .then(() => {
-      setSelectedBookNumbers([])
-      setIsDelete(false)
-    })
+    Alert.alert(
+      '선택한 책을 지우시겠습니까?',
+      '목록에서 삭제되며 파일이 지워지지 않습니다.',
+      [
+        {
+          text: '삭제', style: 'destructive',
+          onPress: () => {
+            deleteBook(selectedBookNumbers)
+            .then(() => {
+              setSelectedBookNumbers([]);
+              setIsDelete(false);
+            })
+          }
+        },
+        {
+          text: '취소', style: 'cancel'
+        }
+      ]
+    )
     }}>
     <Text className="text-center text-base text-red-500">삭제</Text>
   </TouchableOpacity>
@@ -96,10 +109,12 @@ const renderItem = ({item, index}: any) => {
         ))} */}
       {/* </ScrollView> */}
       <FlatList
-        contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}
+        contentContainerStyle={{flexDirection: 'row'}}
+        columnWrapperStyle={{ flexWrap: "wrap", justifyContent: 'center'}}
         data={books}
         renderItem={renderItem}
         keyExtractor={(item, index) => String(index)}
+        numColumns={10}
       />
     </SafeAreaView>
   )

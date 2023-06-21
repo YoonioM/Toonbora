@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import IBook from '../models/interface/IBook'
 import { AsyncKey } from '../models/enums/AsyncKey'
 import axios from 'axios'
+import { KAKAO_REST_API_KEY } from '@env'
 
 /**
  * =====
@@ -26,6 +27,7 @@ const useBook = () => {
 
     const getBooks = async () => {
       console.log(DocumentDirectoryPath)
+      console.log(KAKAO_REST_API_KEY)
         const localBooks = await AsyncStorage.getItem(AsyncKey.Books)
         if(localBooks != null){
             setBooks(JSON.parse(localBooks))
