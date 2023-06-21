@@ -19,7 +19,7 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
   return (
     <>
       <View
-      className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'
+      className='flex-row w-full items-end pb-1.5 bg-slate-50 z-50'
       style={{
           height: 40,
       }}
@@ -38,7 +38,7 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
       </View>
       {visibleMenu && <Menu menus={menus}/>}
       <View 
-      className='z-50'
+      className='w-full bg-slate-50 z-50'
       style={{
           height: 1,
           shadowColor: "#000",
