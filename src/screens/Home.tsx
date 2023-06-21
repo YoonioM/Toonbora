@@ -25,7 +25,7 @@ import IMenuButton from "../models/interface/IMenuButton";
 
 export default function Home({ navigation }: { navigation: NavigationProp<IParamList> }) {
 
-  const {books, addBook, deleteBook} = useBook()
+  const {books, addBook, deleteBook, changeThumbnail} = useBook()
   const [currentMenu, setCurrentMenu] = useRecoilState(currentMenuState)
   const [selectedBookNumbers, setSelectedBookNumbers] = useState<number[]>([])
 
@@ -64,25 +64,29 @@ export default function Home({ navigation }: { navigation: NavigationProp<IParam
               
     delete: <TouchableOpacity
     onPress={() => {
-      Alert.alert(
-        '선택한 책을 지우시겠습니까?',
-        '목록에서 삭제되며 파일이 지워지지 않습니다.',
-        [
-          {
-            text: '삭제', style: 'destructive',
-            onPress: () => {
-              deleteBook(selectedBookNumbers)
-              .then(() => {
-                setSelectedBookNumbers([]);
-                setCurrentMenu('default');
-              })
+      if(selectedBookNumbers.length > 0){
+        Alert.alert(
+          '선택한 책을 지우시겠습니까?',
+          '목록에서 삭제되며 파일이 지워지지 않습니다.',
+          [
+            {
+              text: '취소', style: 'cancel'
+            },
+            {
+              text: '삭제', style: 'destructive',
+              onPress: () => {
+                deleteBook(selectedBookNumbers)
+                .then(() => {
+                  setSelectedBookNumbers([]);
+                  setCurrentMenu('default');
+                })
+              }
             }
-          },
-          {
-            text: '취소', style: 'cancel'
-          }
-        ]
-      )
+          ]
+        )
+      }else{
+        setCurrentMenu('default');
+      }
       }}>
       <Text className="text-center text-base text-red-500">삭제</Text>
     </TouchableOpacity>,
@@ -120,7 +124,7 @@ const navTitles: {default: string, delete: string, change_thumbnail: string} = {
 
 const renderItem = ({item, index}: any) => {
   return(
-    <Book book={item} idx={index} setSelectedBookNumbers={setSelectedBookNumbers}/>
+    <Book book={item} idx={index} setSelectedBookNumbers={setSelectedBookNumbers} changeThumbnail={changeThumbnail}/>
   )
 }
 

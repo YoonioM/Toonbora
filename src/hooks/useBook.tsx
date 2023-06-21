@@ -88,7 +88,6 @@ const useBook = () => {
           page: 1,
           size: 1
       }})
-      console.log(data)
 
       if(data.documents[0]){
         return data.documents[0].image_url
@@ -97,7 +96,6 @@ const useBook = () => {
       }
     }
 
-    // 썸네일을 바꾸면 리랜더링 안되는 문제 있음
     const changeThumbnail = (idx: number) => {
       console.log(idx)
       Alert.prompt('표지를 찾을 검색어를 입력해 주세요.', '',
@@ -113,7 +111,10 @@ const useBook = () => {
               const thumbnail = await searchThumbnail(text);
               setBooks(val => {
                 const newVal = [...val];
-                newVal[idx].thumbnail = thumbnail;
+                const newObj = {...newVal[idx]};
+                newObj.thumbnail = thumbnail;
+                newVal[idx] = newObj;
+                // newVal.splice(idx, 0, newObj);
                 saveBooks(JSON.stringify(newVal));
                 return newVal;
               })
@@ -133,10 +134,6 @@ const useBook = () => {
         // asyncstorage에서 북 리스트 가져오기
         getBooks();
     }, [])
-
-    useEffect(() => {
-      console.log('book 바뀜')
-    }, [books])
 
     return {books, addBook, deleteBook, changeThumbnail};
 } 
