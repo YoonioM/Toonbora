@@ -1,17 +1,19 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import IParamList from "../models/interface/IParamList";
 import Icon from "react-native-vector-icons/FontAwesome";
-import orientationState from "../recoil/atom/orientationState";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import Nav from "./Nav";
 import ViewerFooter from "./ViewerFooter";
 import { navOpenState } from "../recoil/atom/viewerState";
 
-export default function ViewerMenu() {
+interface IViewerMenuProp {
+    flatListRef: React.RefObject<FlatList>;
+}
+
+export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
 
     const navigation = useNavigation<NavigationProp<IParamList>>();
-    const isLandscape = useRecoilValue(orientationState);
     const [navOpen, setNavOpen] = useRecoilState(navOpenState);
 
     const leftButton = (
@@ -31,15 +33,17 @@ export default function ViewerMenu() {
     return (
         <>
             <SafeAreaView pointerEvents={ navOpen ? 'auto' : 'none' }
-                className={`absolute w-full bg-slate-50 border-b border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
+                className={`absolute top-0 w-full bg-slate-50 border-b border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
-                <View><Nav leftButton={leftButton} title={'이름'} rightButton={rightButton}/></View>
+                <View className="w-full relative">
+                    <Nav leftButton={leftButton} title={'이름'} rightButton={rightButton}/>
+                </View>
             </SafeAreaView>
             <SafeAreaView pointerEvents={ navOpen ? 'auto' : 'none' }
                 className={`absolute bottom-0 w-full bg-slate-50 border-t border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
                 <View className='w-full relative'>
-                    <ViewerFooter/>
+                    <ViewerFooter flatListRef={flatListRef}/>
                 </View>
             </SafeAreaView>
         </>

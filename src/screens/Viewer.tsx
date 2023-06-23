@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, GestureResponderEvent, Image, StatusBar, Touchable, TouchableOpacity, View, ViewToken, ViewabilityConfigCallbackPairs } from "react-native";
+import { FlatList, Image, StatusBar , TouchableOpacity, View, ViewToken, ViewabilityConfigCallbackPairs } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import RNFS from 'react-native-fs';
@@ -21,7 +21,6 @@ export default function Viewer() {
     const [imgs, setImgs] = useState<IImgFile[]>([]);
     const totalPageRef = useRef<number>(0);
     const flatListRef = useRef<FlatList>(null);
-    const { width: deviceWidth } = Dimensions.get('window');
     const setCurrentPage = useSetRecoilState(currentPageState);
 
     const onViewableItemsChanged = ({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
@@ -53,31 +52,35 @@ export default function Viewer() {
             totalPageRef.current = newImgs.length - 2;
         });
     }, [route]);
-
+    
     const imageItem = ({ item }: { item: IImgFile }) => {
         return item.paddingItem
         ? <View style={{ width: '100%', height: StatusBar.currentHeight || 0 + 100 }}/>
         : <TouchableOpacity activeOpacity={1} onPress={() => { setNavOpen(!navOpen) }}>
-            <Image source={ { uri: `${dirPath}/${item.fileName}`} }style={ { width: deviceWidth, height: deviceWidth} } />
+            <Image source={ { uri: `${dirPath}/${item.fileName}`} }
+                style={{ width: '100%', aspectRatio: 1, resizeMode: 'cover' }}
+            />
         </TouchableOpacity>
-    }
+    };
 
     return (
         <>
-            <FlatList
-                data={ imgs } 
-                renderItem={ imageItem } 
-                keyExtractor={(item) => item.id.toString()}
-                ref={flatListRef}
-                showsHorizontalScrollIndicator={false}
-                viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
-                onScroll={() => { setNavOpen(false); }}
-                className='bg-white h-full'
-            />
+            <TouchableOpacity activeOpacity={1} onPress={() => { setNavOpen(!navOpen); }}>
+                <FlatList
+                    data={ imgs } 
+                    renderItem={ imageItem } 
+                    keyExtractor={(item) => item.id.toString()}
+                    ref={flatListRef}
+                    showsHorizontalScrollIndicator={false}
+                    viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                    onScrollBeginDrag={() => { setNavOpen(false); }}
+                    className='bg-white h-full'
+                />
+            </TouchableOpacity>
             {/* <View className='h-full w-full absolute top-0 left-0' onResponderMove={scrollHandler}>
                 
             </View> */}
-            <ViewerMenu/>
+            <ViewerMenu flatListRef={flatListRef}/>
         </>
     )
 }
