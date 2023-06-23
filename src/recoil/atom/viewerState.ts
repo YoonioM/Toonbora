@@ -15,3 +15,8 @@ export const totalPageState = atom<number>({
     key: 'totalPageState',
     default: 0
 });
+
+export const navOpenState = atom<boolean>({
+    key: 'navOpenState',
+    default: true
+})
