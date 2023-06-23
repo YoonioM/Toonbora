@@ -1,10 +1,10 @@
 import { FlatList, Image, StatusBar , TouchableOpacity, View, ViewToken, ViewabilityConfigCallbackPairs } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import RNFS from 'react-native-fs';
 import IParamList from "../models/interface/IParamList";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { currentPageState, navOpenState, totalPageState } from "../recoil/atom/viewerState";
+import { currentPageState, footerDragState, navOpenState, totalPageState } from "../recoil/atom/viewerState";
 import ViewerMenu from "../components/ViewerMenu";
 
 interface IImgFile {
@@ -19,9 +19,10 @@ export default function Viewer() {
     const setTotalPage = useSetRecoilState(totalPageState);
     const [navOpen, setNavOpen] = useRecoilState(navOpenState);
     const [imgs, setImgs] = useState<IImgFile[]>([]);
+    const isFooterDrag = useRecoilValue(footerDragState);
     const totalPageRef = useRef<number>(0);
     const flatListRef = useRef<FlatList>(null);
-    const setCurrentPage = useSetRecoilState(currentPageState);
+    const [currentPage, setCurrentPage] = useRecoilState(currentPageState);
 
     const onViewableItemsChanged = ({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
         if (viewableItems.length < 1) return;
@@ -53,6 +54,12 @@ export default function Viewer() {
         });
     }, [route]);
     
+    useEffect(() => {
+        if (isFooterDrag && flatListRef.current) {
+            flatListRef.current.scrollToIndex({ index: currentPage, animated: false });
+        };
+    }, [currentPage]);
+
     const imageItem = ({ item }: { item: IImgFile }) => {
         return item.paddingItem
         ? <View style={{ width: '100%', height: StatusBar.currentHeight || 0 + 100 }}/>
@@ -80,7 +87,7 @@ export default function Viewer() {
             {/* <View className='h-full w-full absolute top-0 left-0' onResponderMove={scrollHandler}>
                 
             </View> */}
-            <ViewerMenu flatListRef={flatListRef}/>
+            <ViewerMenu/>
         </>
     )
 }

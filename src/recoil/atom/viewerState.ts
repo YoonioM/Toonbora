@@ -20,3 +20,8 @@ export const navOpenState = atom<boolean>({
     key: 'navOpenState',
     default: true
 })
+
+export const footerDragState = atom<boolean>({
+    key: 'footerDragState',
+    default: false
+})

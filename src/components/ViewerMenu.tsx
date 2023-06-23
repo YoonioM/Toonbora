@@ -1,5 +1,5 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import IParamList from "../models/interface/IParamList";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useRecoilState } from "recoil";
@@ -7,11 +7,7 @@ import Nav from "./Nav";
 import ViewerFooter from "./ViewerFooter";
 import { navOpenState } from "../recoil/atom/viewerState";
 
-interface IViewerMenuProp {
-    flatListRef: React.RefObject<FlatList>;
-}
-
-export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
+export default function ViewerMenu() {
 
     const navigation = useNavigation<NavigationProp<IParamList>>();
     const [navOpen, setNavOpen] = useRecoilState(navOpenState);
@@ -43,7 +39,7 @@ export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
                 className={`absolute bottom-0 w-full bg-slate-50 border-t border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
                 <View className='w-full relative'>
-                    <ViewerFooter flatListRef={flatListRef}/>
+                    <ViewerFooter/>
                 </View>
             </SafeAreaView>
         </>

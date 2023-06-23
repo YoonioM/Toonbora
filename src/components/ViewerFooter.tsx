@@ -1,12 +1,8 @@
-import { FlatList, PanResponder, PanResponderInstance, Text, View } from "react-native";
+import { PanResponder, PanResponderInstance, Text, View } from "react-native";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import viewerSelector from "../recoil/selector/viewerSelector";
 import { useEffect, useRef } from "react";
-import { currentPageState } from "../recoil/atom/viewerState";
-
-interface IViewerFooterProp {
-    flatListRef: React.RefObject<FlatList>;
-}
+import { currentPageState, footerDragState } from "../recoil/atom/viewerState";
 
 interface IPageRef {
     currentPage: number;
@@ -15,10 +11,11 @@ interface IPageRef {
     isMoving: boolean;
 }
 
-export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
+export default function ViewerFooter() {
 
     const { currentPage, totalPage } = useRecoilValue(viewerSelector);
     const setCurrentPage = useSetRecoilState(currentPageState);
+    const setDrag = useSetRecoilState(footerDragState);
     const container = useRef<View>(null);
     const pageRef = useRef<IPageRef>({
         currentPage: 1,
@@ -33,7 +30,7 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
             onMoveShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
                 pageRef.current.changedPage = 0;
-                pageRef.current.isMoving = true;
+                setDrag(true);
             },
             onPanResponderMove(e, gestureState) {
                 container.current?.measure((x, y, w) => {
@@ -48,7 +45,7 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
                 })
             },
             onPanResponderEnd: () => {
-                pageRef.current.isMoving = false;
+                setDrag(false);
             }
         })
     ).current;
@@ -56,10 +53,7 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
     useEffect(() => {
         pageRef.current.currentPage = currentPage;
         pageRef.current.totalPage = totalPage;
-        if (pageRef.current.isMoving && flatListRef.current) {
-            flatListRef.current.scrollToIndex({ index: currentPage, animated: false });
-        };
-    }, [currentPage]);
+    }, [currentPage, totalPage]);
 
     return (
         <>
