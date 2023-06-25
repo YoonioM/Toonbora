@@ -1,16 +1,18 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
 import IParamList from "../models/interface/IParamList";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Nav from "./Nav";
 import ViewerFooter from "./ViewerFooter";
-import { navOpenState } from "../recoil/atom/viewerState";
+import { navOpenState, scrollModeState } from "../recoil/atom/viewerState";
+import { MenuView } from "@react-native-menu/menu";
 
 export default function ViewerMenu() {
 
     const navigation = useNavigation<NavigationProp<IParamList>>();
-    const [navOpen, setNavOpen] = useRecoilState(navOpenState);
+    const navOpen = useRecoilValue(navOpenState);
+    const [isScrollMode, setScrollMode] = useRecoilState(scrollModeState);
 
     const leftButton = (
         <TouchableOpacity onPress={() => {
@@ -21,9 +23,18 @@ export default function ViewerMenu() {
     );
 
     const rightButton = (
-        <TouchableOpacity onPress={() => { setNavOpen(!navOpen) }}>
-            <Text className='font-bold text-purple-600'>숨기기</Text>
-        </TouchableOpacity>
+        <MenuView title='뷰어 옵션' onPressAction={ ({ nativeEvent }) => {
+            nativeEvent.event === 'scrollModeToggle' && setScrollMode(!isScrollMode);
+        }} actions={[
+            {
+                id: 'scrollModeToggle',
+                title: isScrollMode ? '좌우로 넘기기' : '상하로 넘기기',
+            }
+        ]}>
+            <TouchableOpacity activeOpacity={0.7}>
+                <Icon name="gear" size={25} color={'#9341f9'} />
+            </TouchableOpacity>
+        </MenuView>
     );
 
     return (
