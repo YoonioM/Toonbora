@@ -1,20 +1,22 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, TouchableOpacity, View } from "react-native";
 import IParamList from "../models/interface/IParamList";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Nav from "./Nav";
 import ViewerFooter from "./ViewerFooter";
-import { navOpenState } from "../recoil/atom/viewerState";
+import { navOpenState, scrollModeState } from "../recoil/atom/viewerState";
+import { MenuView } from "@react-native-menu/menu";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface IViewerMenuProp {
-    flatListRef: React.RefObject<FlatList>;
-}
+type TViewerMenuProp = Partial<Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>>;
 
-export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
+export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
 
     const navigation = useNavigation<NavigationProp<IParamList>>();
-    const [navOpen, setNavOpen] = useRecoilState(navOpenState);
+    const navOpen = useRecoilValue(navOpenState);
+    const [isScrollMode, setScrollMode] = useRecoilState(scrollModeState);
 
     const leftButton = (
         <TouchableOpacity onPress={() => {
@@ -24,10 +26,29 @@ export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
         </TouchableOpacity>
     );
 
+    useEffect(() => {
+        AsyncStorage.getItem('scrollMode').then( val => {
+            setScrollMode(val === 'T');
+        })
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('scrollMode', isScrollMode ? 'T' : 'F');
+    }, [isScrollMode]);
+
     const rightButton = (
-        <TouchableOpacity onPress={() => { setNavOpen(!navOpen) }}>
-            <Text className='font-bold text-purple-600'>숨기기</Text>
-        </TouchableOpacity>
+        <MenuView title='뷰어 옵션' onPressAction={ ({ nativeEvent }) => {
+            nativeEvent.event === 'scrollModeToggle' && setScrollMode(!isScrollMode);
+        }} actions={[
+            {
+                id: 'scrollModeToggle',
+                title: isScrollMode ? '좌우로 넘기기' : '상하로 넘기기',
+            }
+        ]}>
+            <TouchableOpacity activeOpacity={0.7}>
+                <Icon name="gear" size={25} color={'#9341f9'} />
+            </TouchableOpacity>
+        </MenuView>
     );
 
     return (
@@ -43,7 +64,7 @@ export default function ViewerMenu({ flatListRef }: IViewerMenuProp) {
                 className={`absolute bottom-0 w-full bg-slate-50 border-t border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
                 <View className='w-full relative'>
-                    <ViewerFooter flatListRef={flatListRef}/>
+                    <ViewerFooter dirPathList={dirPathList} dirIdx={dirIdx}/>
                 </View>
             </SafeAreaView>
         </>

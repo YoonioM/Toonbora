@@ -1,12 +1,10 @@
-import { FlatList, PanResponder, PanResponderInstance, Text, View } from "react-native";
+import { PanResponder, PanResponderInstance, Text, TouchableOpacity, View } from "react-native";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import viewerSelector from "../recoil/selector/viewerSelector";
 import { useEffect, useRef } from "react";
-import { currentPageState } from "../recoil/atom/viewerState";
-
-interface IViewerFooterProp {
-    flatListRef: React.RefObject<FlatList>;
-}
+import { currentPageState, footerDragState } from "../recoil/atom/viewerState";
+import Icon from "react-native-vector-icons/FontAwesome";
+import IParamList from "../models/interface/IParamList";
 
 interface IPageRef {
     currentPage: number;
@@ -15,10 +13,13 @@ interface IPageRef {
     isMoving: boolean;
 }
 
-export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
+type TViewerFooterProp = Partial<Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>>;
+
+export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp) {
 
     const { currentPage, totalPage } = useRecoilValue(viewerSelector);
     const setCurrentPage = useSetRecoilState(currentPageState);
+    const setDrag = useSetRecoilState(footerDragState);
     const container = useRef<View>(null);
     const pageRef = useRef<IPageRef>({
         currentPage: 1,
@@ -33,7 +34,7 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
             onMoveShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
                 pageRef.current.changedPage = 0;
-                pageRef.current.isMoving = true;
+                setDrag(true);
             },
             onPanResponderMove(e, gestureState) {
                 container.current?.measure((x, y, w) => {
@@ -48,7 +49,7 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
                 })
             },
             onPanResponderEnd: () => {
-                pageRef.current.isMoving = false;
+                setDrag(false);
             }
         })
     ).current;
@@ -56,13 +57,10 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
     useEffect(() => {
         pageRef.current.currentPage = currentPage;
         pageRef.current.totalPage = totalPage;
-        if (pageRef.current.isMoving && flatListRef.current) {
-            flatListRef.current.scrollToIndex({ index: currentPage, animated: false });
-        };
-    }, [currentPage]);
+    }, [currentPage, totalPage]);
 
     return (
-        <>
+        <View>
             <View className='flex flex-row justify-start z-20'>
                 <View className='bg-purple-500 h-1 w-1/2' style={{ width: 12 }}/>
                 <View className='flex-1 z-10 bg-slate-300' ref={container}>
@@ -81,9 +79,23 @@ export default function ViewerFooter({ flatListRef }: IViewerFooterProp) {
                 </View>
                 <View className='bg-gray-300 h-1' style={{ minWidth: 12 }}/>
             </View>
-            <View className='bg-slate-50 w-full z-10' style={{ height: 50 }}>
-                <Text className='text-lg'>뷰어 푸터 { currentPage } / { totalPage }</Text>
+            <View className='bg-slate-50 w-full z-10 flex flex-row pt-1 px-5 justify-center' style={{ height: 50 }}>
+                { dirPathList && dirPathList.length > 1 &&
+                    <TouchableOpacity className='pt-2 flex flex-row w-4/12'>
+                        <Icon name='chevron-left' size={16} color='#9333ea'></Icon>
+                        <Text>이전 화</Text>
+                    </TouchableOpacity> 
+                }
+                <Text className='text-lg'>
+                    <Text className='text-purple-600'>{ currentPage }</Text> / { totalPage }
+                </Text>
+                { dirPathList && dirPathList.length > 1 && 
+                    <TouchableOpacity className='pt-2 flex flex-row w-4/12'>
+                        <Text>다음 화</Text>
+                        <Icon name='chevron-right' size={20} color='#9333ea'></Icon>
+                    </TouchableOpacity>
+                }
             </View>
-        </>
+        </View>
     )
 }

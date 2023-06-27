@@ -8,7 +8,7 @@ export const scrollModeState = atom<boolean>({
 
 export const currentPageState = atom<number>({
     key: 'currentPageState',
-    default: 0
+    default: 1
 });
 
 export const totalPageState = atom<number>({
@@ -19,4 +19,9 @@ export const totalPageState = atom<number>({
 export const navOpenState = atom<boolean>({
     key: 'navOpenState',
     default: true
-})
+});
+
+export const footerDragState = atom<boolean>({
+    key: 'footerDragState',
+    default: false
+});
