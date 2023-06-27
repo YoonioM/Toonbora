@@ -36,9 +36,9 @@ export default function Viewer() {
 
     return (
         <>
-            { isScrollMode && <ScrollViewer imgs={imgs} totalPageRef={totalPageRef} dirPath={dirPath}/> }
-            { !isScrollMode && <TouchViewer imgs={imgs} dirPath={dirPath}/> }
-            <ViewerMenu/>
+            { isScrollMode && imgs.length > 0 && <ScrollViewer imgs={imgs} totalPageRef={totalPageRef} dirPath={dirPath}/> }
+            { !isScrollMode && imgs.length > 0 && <TouchViewer imgs={imgs} dirPath={dirPath}/> }
+            <ViewerMenu dirPathList={route.params?.dirPathList} dirIdx={route.params?.dirIdx}/>
         </>
     )
 }

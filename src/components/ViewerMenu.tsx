@@ -7,8 +7,12 @@ import Nav from "./Nav";
 import ViewerFooter from "./ViewerFooter";
 import { navOpenState, scrollModeState } from "../recoil/atom/viewerState";
 import { MenuView } from "@react-native-menu/menu";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ViewerMenu() {
+type TViewerMenuProp = Partial<Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>>;
+
+export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
 
     const navigation = useNavigation<NavigationProp<IParamList>>();
     const navOpen = useRecoilValue(navOpenState);
@@ -21,6 +25,16 @@ export default function ViewerMenu() {
             <Icon name='chevron-left' size={20} color='#9333ea'></Icon>
         </TouchableOpacity>
     );
+
+    useEffect(() => {
+        AsyncStorage.getItem('scrollMode').then( val => {
+            setScrollMode(val === 'T');
+        })
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.setItem('scrollMode', isScrollMode ? 'T' : 'F');
+    }, [isScrollMode]);
 
     const rightButton = (
         <MenuView title='뷰어 옵션' onPressAction={ ({ nativeEvent }) => {
@@ -50,7 +64,7 @@ export default function ViewerMenu() {
                 className={`absolute bottom-0 w-full bg-slate-50 border-t border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
                 <View className='w-full relative'>
-                    <ViewerFooter/>
+                    <ViewerFooter dirPathList={dirPathList} dirIdx={dirIdx}/>
                 </View>
             </SafeAreaView>
         </>
