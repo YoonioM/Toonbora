@@ -1,19 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import RNFS from 'react-native-fs';
 import IParamList from "../models/interface/IParamList";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { scrollModeState, totalPageState } from "../recoil/atom/viewerState";
+import { currentPageState, scrollModeState, totalPageState } from "../recoil/atom/viewerState";
 import ViewerMenu from "../components/ViewerMenu";
 import IImgFile from "../models/interface/IImgFile";
 import ScrollViewer from "../components/ScrollViewer";
 import TouchViewer from "../components/TouchViewer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
 export default function Viewer() {
     const route = useRoute<RouteProp<IParamList, "Viewer">>();
     const dirPath = route.params ? route.params.dirPathList[route.params.dirIdx] : RNFS.DocumentDirectoryPath + '/manwa';
     const setTotalPage = useSetRecoilState(totalPageState);
     const [imgs, setImgs] = useState<IImgFile[]>([]);
+    const [currentPage, setCurrentPage] = useRecoilState(currentPageState);
     const isScrollMode = useRecoilValue(scrollModeState);
     const totalPageRef = useRef<number>(1);
 
@@ -32,7 +35,15 @@ export default function Viewer() {
             setTotalPage(newImgs.length - 2);
             totalPageRef.current = newImgs.length - 2;
         });
+        AsyncStorage.getItem(dirPath).then(result => {
+            if (!(result && result !== '1')) return AsyncStorage.setItem(dirPath, '1');
+            setCurrentPage(parseInt(result));
+        });
     }, [route]);
+
+    useEffect(() => {
+        AsyncStorage.setItem(dirPath, currentPage.toString());
+    }, [currentPage]);
 
     return (
         <>
