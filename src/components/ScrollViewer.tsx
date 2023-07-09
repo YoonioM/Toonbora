@@ -11,7 +11,6 @@ interface IScrollViewerProp {
 }
 
 export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollViewerProp) {
-
     const flatListRef = useRef<FlatList>(null);
     const [currentPage, setCurrentPage] = useRecoilState(currentPageState);
     const [isNavOpen, setNavOpen] = useRecoilState(navOpenState);
@@ -19,8 +18,8 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
 
     const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: Array<ViewToken>}) => {
         if (viewableItems.length < 1) return;
-        const currentPage = viewableItems[0].item.id as number;
-        setCurrentPage(currentPage < 1 ? 1 : currentPage > totalPageRef.current ? totalPageRef.current : currentPage);
+        const currentPageIdx = viewableItems[0].item.id as number;
+        setCurrentPage(currentPageIdx < 1 ? 1 : currentPageIdx > totalPageRef.current ? totalPageRef.current : currentPageIdx);
     }, []);
 
     const viewabilityConfigCallbackPairs = useRef<ViewabilityConfigCallbackPairs>([
@@ -48,13 +47,17 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
     return (
         <TouchableOpacity activeOpacity={1} onPress={() => { setNavOpen(!isNavOpen); }}>
             <FlatList
-                data={ imgs } 
-                renderItem={ imageItem } 
+                data={ imgs }
+                renderItem={ imageItem }
                 keyExtractor={(item) => item.id.toString()}
                 ref={flatListRef}
                 showsHorizontalScrollIndicator={false}
                 viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 onScrollBeginDrag={() => { setNavOpen(false); }}
+                initialScrollIndex={currentPage}
+                onScrollToIndexFailed={() => {
+                    setTimeout(() => flatListRef.current?.scrollToIndex({ index: currentPage, animated: false }), 500);
+                }}
                 className='bg-white h-full'
             />
         </TouchableOpacity>
