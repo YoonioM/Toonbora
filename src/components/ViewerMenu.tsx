@@ -10,7 +10,7 @@ import { MenuView } from "@react-native-menu/menu";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type TViewerMenuProp = Partial<Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>>;
+type TViewerMenuProp = Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>;
 
 export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
 

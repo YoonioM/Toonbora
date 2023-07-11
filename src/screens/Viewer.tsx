@@ -9,7 +9,6 @@ import IImgFile from "../models/interface/IImgFile";
 import ScrollViewer from "../components/ScrollViewer";
 import TouchViewer from "../components/TouchViewer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
 
 export default function Viewer() {
     const route = useRoute<RouteProp<IParamList, "Viewer">>();
