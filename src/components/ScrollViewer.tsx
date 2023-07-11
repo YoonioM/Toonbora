@@ -23,7 +23,7 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
     }, []);
 
     const viewabilityConfigCallbackPairs = useRef<ViewabilityConfigCallbackPairs>([
-        { 
+        {
             viewabilityConfig: { viewAreaCoveragePercentThreshold: 95 },
             onViewableItemsChanged: onViewableItemsChanged 
         },
@@ -40,6 +40,10 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
     };
 
     useEffect(() => {
+        flatListRef.current?.scrollToIndex({ index: currentPage, animated: false });
+    }, []);
+
+    useEffect(() => {
         if (!isFooterDrag) return;
         flatListRef.current?.scrollToIndex({ index: currentPage, animated: false });
     }, [currentPage]);
@@ -54,9 +58,8 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
                 showsHorizontalScrollIndicator={false}
                 viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 onScrollBeginDrag={() => { setNavOpen(false); }}
-                initialScrollIndex={currentPage}
                 onScrollToIndexFailed={() => {
-                    setTimeout(() => flatListRef.current?.scrollToIndex({ index: currentPage, animated: false }), 500);
+                    setTimeout(() => flatListRef.current?.scrollToIndex({ index: currentPage, animated: false }), 100);
                 }}
                 className='bg-white h-full'
             />
