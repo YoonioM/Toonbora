@@ -2,6 +2,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import IImgFile from "../models/interface/IImgFile";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentPageState, navOpenState, totalPageState } from "../recoil/atom/viewerState";
+import FitImage from "./FitImage";
 
 interface ITouchViewerProp {
     imgs: IImgFile[];
@@ -27,9 +28,7 @@ export default function TouchViewer({ imgs, dirPath }: ITouchViewerProp) {
 
     return (
         <View className='w-full h-full flex justify-center'>
-            <Image source={{ uri: `${dirPath}/${imgs[currentPage].fileName}` }}
-                style={{ width: '100%', aspectRatio: 1, resizeMode: 'cover' }}
-            />
+            <FitImage source={{ uri: `${dirPath}/${imgs[currentPage].fileName}` }}/>
             <View className='w-full h-full absolute flex flex-row'>
                 <TouchableOpacity className='w-4/12' onPress={() => { pageMove(-1); }}/>
                 <TouchableOpacity className='w-4/12' onPress={() => { setNavOpen( !isNavOpen ); }} />

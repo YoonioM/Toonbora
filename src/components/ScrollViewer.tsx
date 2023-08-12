@@ -3,6 +3,8 @@ import IImgFile from "../models/interface/IImgFile";
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentPageState, footerDragState, navOpenState } from "../recoil/atom/viewerState";
+import FitImage from "./FitImage";
+
 
 interface IScrollViewerProp {
     imgs: IImgFile[];
@@ -33,9 +35,7 @@ export default function ScrollViewer({ imgs, totalPageRef, dirPath }: IScrollVie
         return item.paddingItem
         ? <View style={{ width: '100%', height: StatusBar.currentHeight || 0 + 100 }}/>
         : <TouchableOpacity activeOpacity={1} onPress={() => { setNavOpen(!isNavOpen) }}>
-            <Image source={ { uri: `${dirPath}/${item.fileName}`} }
-                style={{ width: '100%', aspectRatio: 1, resizeMode: 'cover' }}
-            />
+            <FitImage source={ { uri: `${dirPath}/${item.fileName}`} }/>
         </TouchableOpacity>
     };
 
