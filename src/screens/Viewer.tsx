@@ -28,6 +28,7 @@ export default function Viewer() {
                     const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLocaleLowerCase();
                     return allowedExtensions.has(fileExtension);
                 })
+                .sort((a, b) => parseInt(a.name.replace(/[^0-9]/g, '')) - parseInt(b.name.replace(/[^0-9]/g, '')))
                 .forEach((file, i) => newImgs.push({ id: i + 1, fileName: file.name }));
             newImgs.push({ id: newImgs.length, paddingItem: true });
             setImgs(newImgs);
