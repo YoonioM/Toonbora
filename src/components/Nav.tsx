@@ -36,7 +36,7 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
               <Text className='text-center text-base text-purple-600'>{title}</Text>
           </View>
       </View>
-      {visibleMenu && <Menu menus={menus}/>}
+      {visibleMenu && menus && <Menu menus={menus}/>}
       <View 
       className='w-full bg-slate-50 z-50'
       style={{
