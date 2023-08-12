@@ -9,20 +9,7 @@ type Props = {
 
 const Nav = ({ leftButton, title, rightButton }: Props) => {
     return (
-        <View
-        className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'
-        style={{
-            height: 40,
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 1,
-            },
-            shadowOpacity: 0.22,
-            shadowRadius: 2.22,
-            elevation: 3,
-        }}
-        >
+        <View className='flex-row w-full items-end pb-1.5 z-50 bg-slate-50'>
             <View className='absolute flex-row w-full pb-1.5 px-5 items-center justify-between'>
                 <View className=''>
                         {leftButton}
