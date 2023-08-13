@@ -1,4 +1,4 @@
-import { Image, ImageURISource, Text, View } from 'react-native'
+import { Image, ImageURISource } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 interface Props {
