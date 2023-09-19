@@ -3,9 +3,10 @@ import { NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IParamList from '../models/interface/IParamList';
 import Nav from '../components/Nav';
+import SplashScreen from 'react-native-splash-screen';
 
 import useBook from '../hooks/useBook';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { currentMenuState, visibleMenuState } from '../recoil/atom/navState';
 import IMenu from '../models/interface/Imenu';
