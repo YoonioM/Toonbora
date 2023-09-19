@@ -1,12 +1,4 @@
-import {
-    Alert,
-    FlatList,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IParamList from '../models/interface/IParamList';
@@ -31,16 +23,10 @@ import IMenuButton from '../models/interface/IMenuButton';
  *
  */
 
-export default function Home({
-    navigation,
-}: {
-    navigation: NavigationProp<IParamList>;
-}) {
+export default function Home({ navigation }: { navigation: NavigationProp<IParamList> }) {
     const { books, addBook, deleteBook, changeThumbnail } = useBook();
     const [currentMenu, setCurrentMenu] = useRecoilState(currentMenuState);
-    const [selectedBookNumbers, setSelectedBookNumbers] = useState<number[]>(
-        []
-    );
+    const [selectedBookNumbers, setSelectedBookNumbers] = useState<number[]>([]);
 
     const setVisibleMenu = useSetRecoilState(visibleMenuState);
 
@@ -52,7 +38,7 @@ export default function Home({
                     addBook();
                 }}
             >
-                <Icon name='ios-add' size={25} color='#9333ea' />
+                <Icon name="ios-add" size={25} color="#9333ea" />
             </TouchableOpacity>
         ),
 
@@ -63,9 +49,7 @@ export default function Home({
                     setCurrentMenu('default');
                 }}
             >
-                <Text className='text-center text-base text-blue-500'>
-                    완료
-                </Text>
+                <Text className="text-center text-base text-blue-500">완료</Text>
             </TouchableOpacity>
         ),
 
@@ -75,9 +59,7 @@ export default function Home({
                     setCurrentMenu('default');
                 }}
             >
-                <Text className='text-center text-base text-blue-500'>
-                    완료
-                </Text>
+                <Text className="text-center text-base text-blue-500">완료</Text>
             </TouchableOpacity>
         ),
     };
@@ -86,14 +68,10 @@ export default function Home({
         default: (
             <TouchableOpacity
                 onPress={() => {
-                    setVisibleMenu((val) => !val);
+                    setVisibleMenu(val => !val);
                 }}
             >
-                <Icon
-                    name='ellipsis-vertical-outline'
-                    size={20}
-                    color='#9333ea'
-                />
+                <Icon name="ellipsis-vertical-outline" size={20} color="#9333ea" />
             </TouchableOpacity>
         ),
 
@@ -101,48 +79,38 @@ export default function Home({
             <TouchableOpacity
                 onPress={() => {
                     if (selectedBookNumbers.length > 0) {
-                        Alert.alert(
-                            '선택한 책을 지우시겠습니까?',
-                            '목록에서 삭제되며 파일이 지워지지 않습니다.',
-                            [
-                                {
-                                    text: '취소',
-                                    style: 'cancel',
+                        Alert.alert('선택한 책을 지우시겠습니까?', '목록에서 삭제되며 파일이 지워지지 않습니다.', [
+                            {
+                                text: '취소',
+                                style: 'cancel',
+                            },
+                            {
+                                text: '삭제',
+                                style: 'destructive',
+                                onPress: () => {
+                                    deleteBook(selectedBookNumbers).then(() => {
+                                        setSelectedBookNumbers([]);
+                                        setCurrentMenu('default');
+                                    });
                                 },
-                                {
-                                    text: '삭제',
-                                    style: 'destructive',
-                                    onPress: () => {
-                                        deleteBook(selectedBookNumbers).then(
-                                            () => {
-                                                setSelectedBookNumbers([]);
-                                                setCurrentMenu('default');
-                                            }
-                                        );
-                                    },
-                                },
-                            ]
-                        );
+                            },
+                        ]);
                     } else {
                         setCurrentMenu('default');
                     }
                 }}
             >
-                <Text className='text-center text-base text-red-500'>삭제</Text>
+                <Text className="text-center text-base text-red-500">삭제</Text>
             </TouchableOpacity>
         ),
 
         change_thumbnail: (
             <TouchableOpacity
                 onPress={() => {
-                    setVisibleMenu((val) => !val);
+                    setVisibleMenu(val => !val);
                 }}
             >
-                <Icon
-                    name='ellipsis-vertical-outline'
-                    size={20}
-                    color='#9333ea'
-                />
+                <Icon name="ellipsis-vertical-outline" size={20} color="#9333ea" />
             </TouchableOpacity>
         ),
     };
@@ -186,19 +154,13 @@ export default function Home({
     };
 
     return (
-        // <View className='h-full bg-slate-50'>
-        <SafeAreaView className='h-full bg-slate-50'>
+        <SafeAreaView className="h-full bg-slate-50">
             <Nav
                 title={navTitles[currentMenu as keyof typeof navTitles]}
                 leftButton={leftButtons[currentMenu as keyof IMenuButton]}
                 rightButton={rightButtons[currentMenu as keyof IMenuButton]}
                 menus={menus}
             />
-            {/* <ScrollView contentContainerStyle={{flexDirection: 'row', flexWrap: "wrap", justifyContent: 'center' }}>
-        {books.map((book: IBook, idx: number) => (
-          <Book book={book} idx={idx} isDelete={isDelete} setSelectedBookNumbers={setSelectedBookNumbers}/>
-        ))} */}
-            {/* </ScrollView> */}
             <FlatList
                 contentContainerStyle={{
                     flexDirection: 'row',

@@ -14,14 +14,7 @@ type Props = {
     changeThumbnail: Function;
 };
 
-const Book = ({
-    book,
-    idx,
-    setSelectedBookNumbers,
-    changeThumbnail,
-}: Props) => {
-    // const {changeThumbnail} = useBook()
-
+const Book = ({ book, idx, setSelectedBookNumbers, changeThumbnail }: Props) => {
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const currentMenu = useRecoilValue(currentMenuState);
     const navigation = useNavigation();
@@ -52,7 +45,7 @@ const Book = ({
     return (
         <>
             <TouchableOpacity
-                className='flex w-36 h-52 m-5 bg-slate-400'
+                className="flex w-36 h-52 m-5 bg-slate-400"
                 style={{
                     shadowColor: '#000',
                     shadowOffset: {
@@ -71,7 +64,7 @@ const Book = ({
                             break;
 
                         case 'delete':
-                            setIsSelected((val) => !val);
+                            setIsSelected(val => !val);
                             break;
 
                         case 'change_thumbnail':
@@ -81,22 +74,14 @@ const Book = ({
                 }}
                 activeOpacity={0.8}
             >
-                {isSelected && (
-                    <View className='absolute w-full h-full bg-slate-400 opacity-50 z-10'></View>
-                )}
+                {isSelected && <View className="absolute w-full h-full bg-slate-400 opacity-50 z-10"></View>}
                 {book.thumbnail ? (
-                    <Image
-                        className='w-full h-full'
-                        source={{ uri: book.thumbnail }}
-                        resizeMode='stretch'
-                    ></Image>
+                    <Image className="w-full h-full" source={{ uri: book.thumbnail }} resizeMode="stretch"></Image>
                 ) : (
                     <Text>{book.name}</Text>
                 )}
 
-                {currentMenu === 'delete' && (
-                    <CheckBox isSelected={isSelected} />
-                )}
+                {currentMenu === 'delete' && <CheckBox isSelected={isSelected} />}
             </TouchableOpacity>
         </>
     );
@@ -104,15 +89,11 @@ const Book = ({
 
 const CheckBox = ({ isSelected }: { selected: boolean }) => {
     return (
-        <View className='absolute top-1/2 left-11 z-20'>
+        <View className="absolute top-1/2 left-11 z-20">
             {isSelected ? (
-                <Icon name='ios-checkmark-circle' size={60} color='#9333ea' />
+                <Icon name="ios-checkmark-circle" size={60} color="#9333ea" />
             ) : (
-                <Icon
-                    name='ios-checkmark-circle-outline'
-                    size={60}
-                    color='#9333ea'
-                />
+                <Icon name="ios-checkmark-circle-outline" size={60} color="#9333ea" />
             )}
         </View>
     );

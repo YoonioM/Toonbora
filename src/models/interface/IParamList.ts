@@ -1,4 +1,5 @@
 import { ParamListBase } from '@react-navigation/native';
+import IBook from './IBook';
 
 export default interface IParamList extends ParamListBase {
     Home: undefined;
@@ -6,5 +7,5 @@ export default interface IParamList extends ParamListBase {
         dirPathList: string[];
         dirIdx: number;
     };
-    BookList: undefined;
+    BookList: { book: IBook };
 }
