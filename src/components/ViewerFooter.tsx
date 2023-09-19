@@ -1,11 +1,17 @@
-import { PanResponder, PanResponderInstance, Text, TouchableOpacity, View } from "react-native";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import viewerSelector from "../recoil/selector/viewerSelector";
-import { useEffect, useRef } from "react";
-import { currentPageState, footerDragState } from "../recoil/atom/viewerState";
-import Icon from "react-native-vector-icons/FontAwesome";
-import IParamList from "../models/interface/IParamList";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+    PanResponder,
+    PanResponderInstance,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import viewerSelector from '../recoil/selector/viewerSelector';
+import { useEffect, useRef } from 'react';
+import { currentPageState, footerDragState } from '../recoil/atom/viewerState';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import IParamList from '../models/interface/IParamList';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 interface IPageRef {
     currentPage: number;
@@ -16,8 +22,10 @@ interface IPageRef {
 
 type TViewerFooterProp = Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>;
 
-export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp) {
-
+export default function ViewerFooter({
+    dirPathList,
+    dirIdx,
+}: TViewerFooterProp) {
     const navigation = useNavigation<NavigationProp<IParamList>>();
     const { currentPage, totalPage } = useRecoilValue(viewerSelector);
     const setCurrentPage = useSetRecoilState(currentPageState);
@@ -27,7 +35,7 @@ export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp)
         currentPage: 1,
         totalPage: 1,
         changedPage: 0,
-        isMoving: false
+        isMoving: false,
     });
 
     const panResponder = useRef<PanResponderInstance>(
@@ -40,19 +48,27 @@ export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp)
             },
             onPanResponderMove(e, gestureState) {
                 container.current?.measure((x, y, w) => {
-                    const { currentPage: current, totalPage: total, changedPage } = pageRef.current;
+                    const {
+                        currentPage: current,
+                        totalPage: total,
+                        changedPage,
+                    } = pageRef.current;
                     const onePageWidth = w / total;
-                    const plusPage = Math.round(gestureState.dx / onePageWidth) - changedPage;
-                    if (plusPage !== 0) { 
+                    const plusPage =
+                        Math.round(gestureState.dx / onePageWidth) -
+                        changedPage;
+                    if (plusPage !== 0) {
                         const toPage = current + plusPage;
-                        setCurrentPage(toPage < 1 ? 1 : toPage > total ? total : toPage);
+                        setCurrentPage(
+                            toPage < 1 ? 1 : toPage > total ? total : toPage
+                        );
                         pageRef.current.changedPage += plusPage;
                     }
-                })
+                });
             },
             onPanResponderEnd: () => {
                 setDrag(false);
-            }
+            },
         })
     ).current;
 
@@ -64,56 +80,88 @@ export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp)
     return (
         <View>
             <View className='flex flex-row justify-start z-20'>
-                <View className='bg-purple-500 h-1 w-1/2' style={{ width: 12 }}/>
+                <View
+                    className='bg-purple-500 h-1 w-1/2'
+                    style={{ width: 12 }}
+                />
                 <View className='flex-1 z-10 bg-slate-300' ref={container}>
-                    <View className='bg-purple-500 h-1 w-1/2 relative z-10' style={
-                        { width: `${(currentPage - 1) / (totalPage - 1) * 100}%` }
-                    }>
-                        <View className='absolute right-0 top-0 transform 
+                    <View
+                        className='bg-purple-500 h-1 w-1/2 relative z-10'
+                        style={{
+                            width: `${
+                                ((currentPage - 1) / (totalPage - 1)) * 100
+                            }%`,
+                        }}
+                    >
+                        <View
+                            className='absolute right-0 top-0 transform 
                             bg-white border-2 border-purple-600 rounded-full'
                             style={[
-                                { width: 24, height: 24},
-                                { transform: [ { translateX: 12 }, { translateY: -10 } ] }
+                                { width: 24, height: 24 },
+                                {
+                                    transform: [
+                                        { translateX: 12 },
+                                        { translateY: -10 },
+                                    ],
+                                },
                             ]}
                             {...panResponder.panHandlers}
                         />
                     </View>
                 </View>
-                <View className='bg-gray-300 h-1' style={{ minWidth: 12 }}/>
+                <View className='bg-gray-300 h-1' style={{ minWidth: 12 }} />
             </View>
-            <View className='bg-slate-50 w-full z-10 flex flex-row pt-1 px-5 justify-center' style={{ height: 50 }}>
-                { dirPathList && dirPathList.length > 1 &&
+            <View
+                className='bg-slate-50 w-full z-10 flex flex-row pt-1 px-5 justify-center'
+                style={{ height: 50 }}
+            >
+                {dirPathList && dirPathList.length > 1 && (
                     <TouchableOpacity
                         className='pt-2 flex flex-row w-4/12'
                         onPress={() => {
                             if (dirIdx < 2) {
                                 return;
                             }
-                            navigation.navigate('Viewer', { dirPathList: dirPathList, dirIdx: dirIdx - 1 });
+                            navigation.navigate('Viewer', {
+                                dirPathList: dirPathList,
+                                dirIdx: dirIdx - 1,
+                            });
                         }}
                     >
-                        <Icon name='chevron-left' size={16} color='#9333ea'></Icon>
+                        <Icon
+                            name='chevron-left'
+                            size={16}
+                            color='#9333ea'
+                        ></Icon>
                         <Text>이전 화</Text>
-                    </TouchableOpacity> 
-                }
+                    </TouchableOpacity>
+                )}
                 <Text className='text-lg'>
-                    <Text className='text-purple-600'>{ currentPage }</Text> / { totalPage }
+                    <Text className='text-purple-600'>{currentPage}</Text> /{' '}
+                    {totalPage}
                 </Text>
-                { dirPathList && dirPathList.length > 1 && 
+                {dirPathList && dirPathList.length > 1 && (
                     <TouchableOpacity
                         className='pt-2 flex flex-row w-4/12'
                         onPress={() => {
-                            if (dirIdx >= (dirPathList.length - 1)) {
+                            if (dirIdx >= dirPathList.length - 1) {
                                 return;
                             }
-                            navigation.navigate('Viewer', { dirPathList: dirPathList, dirIdx: dirIdx + 1 });
+                            navigation.navigate('Viewer', {
+                                dirPathList: dirPathList,
+                                dirIdx: dirIdx + 1,
+                            });
                         }}
                     >
                         <Text>다음 화</Text>
-                        <Icon name='chevron-right' size={20} color='#9333ea'></Icon>
+                        <Icon
+                            name='chevron-right'
+                            size={20}
+                            color='#9333ea'
+                        ></Icon>
                     </TouchableOpacity>
-                }
+                )}
             </View>
         </View>
-    )
+    );
 }

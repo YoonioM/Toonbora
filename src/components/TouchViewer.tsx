@@ -1,8 +1,12 @@
-import { Image, TouchableOpacity, View } from "react-native";
-import IImgFile from "../models/interface/IImgFile";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { currentPageState, navOpenState, totalPageState } from "../recoil/atom/viewerState";
-import FitImage from "./FitImage";
+import { Image, TouchableOpacity, View } from 'react-native';
+import IImgFile from '../models/interface/IImgFile';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+    currentPageState,
+    navOpenState,
+    totalPageState,
+} from '../recoil/atom/viewerState';
+import FitImage from './FitImage';
 
 interface ITouchViewerProp {
     imgs: IImgFile[];
@@ -10,7 +14,6 @@ interface ITouchViewerProp {
 }
 
 export default function TouchViewer({ imgs, dirPath }: ITouchViewerProp) {
-
     /**
      * @todo snackbar 추가, 이미지 크기 조정 추가
      */
@@ -24,16 +27,33 @@ export default function TouchViewer({ imgs, dirPath }: ITouchViewerProp) {
         if (toPage < 1) return;
         if (toPage > totalPage) return;
         setCurrentPage(toPage);
-    }
+    };
 
     return (
         <View className='w-full h-full flex justify-center'>
-            <FitImage source={{ uri: `${dirPath}/${imgs[currentPage].fileName}` }}/>
+            <FitImage
+                source={{ uri: `${dirPath}/${imgs[currentPage].fileName}` }}
+            />
             <View className='w-full h-full absolute flex flex-row'>
-                <TouchableOpacity className='w-4/12' onPress={() => { pageMove(-1); }}/>
-                <TouchableOpacity className='w-4/12' onPress={() => { setNavOpen( !isNavOpen ); }} />
-                <TouchableOpacity className='w-4/12' onPress={() => { pageMove(+1); }}/>
+                <TouchableOpacity
+                    className='w-4/12'
+                    onPress={() => {
+                        pageMove(-1);
+                    }}
+                />
+                <TouchableOpacity
+                    className='w-4/12'
+                    onPress={() => {
+                        setNavOpen(!isNavOpen);
+                    }}
+                />
+                <TouchableOpacity
+                    className='w-4/12'
+                    onPress={() => {
+                        pageMove(+1);
+                    }}
+                />
             </View>
         </View>
-    )
+    );
 }

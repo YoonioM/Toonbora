@@ -1,14 +1,14 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
 
-type Props = {}
+type Props = {};
 
 const Popup = (props: Props) => {
-  return (
-    <View>
-      <Text>Popup</Text>
-    </View>
-  )
-}
+    return (
+        <View>
+            <Text>Popup</Text>
+        </View>
+    );
+};
 
-export default Popup
+export default Popup;
