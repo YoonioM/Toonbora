@@ -10,51 +10,36 @@ import {
 import IImgFile from '../models/interface/IImgFile';
 import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-    currentPageState,
-    footerDragState,
-    navOpenState,
-} from '../recoil/atom/viewerState';
+import { currentPageState, footerDragState, navOpenState } from '../recoil/atom/viewerState';
 import FitImage from './FitImage';
 
 interface IScrollViewerProp {
     imgs: IImgFile[];
     totalPageRef: MutableRefObject<number>;
     dirPath: string;
+    next?: boolean;
 }
 
-export default function ScrollViewer({
-    imgs,
-    totalPageRef,
-    dirPath,
-}: IScrollViewerProp) {
+export default function ScrollViewer({ imgs, totalPageRef, dirPath, next }: IScrollViewerProp) {
     const flatListRef = useRef<FlatList>(null);
     const [currentPage, setCurrentPage] = useRecoilState(currentPageState);
     const [isNavOpen, setNavOpen] = useRecoilState(navOpenState);
     const isFooterDrag = useRecoilValue(footerDragState);
 
-    const onViewableItemsChanged = useCallback(
-        ({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
-            if (viewableItems.length < 1) return;
-            const currentPageIdx = viewableItems[0].item.id as number;
-            setCurrentPage(
-                currentPageIdx < 1
-                    ? 1
-                    : currentPageIdx > totalPageRef.current
-                    ? totalPageRef.current
-                    : currentPageIdx
-            );
-        },
-        []
-    );
+    const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
+        if (viewableItems.length < 1) return;
+        const currentPageIdx = viewableItems[0].item.id as number;
+        setCurrentPage(
+            currentPageIdx < 1 ? 1 : currentPageIdx > totalPageRef.current ? totalPageRef.current : currentPageIdx,
+        );
+    }, []);
 
-    const viewabilityConfigCallbackPairs =
-        useRef<ViewabilityConfigCallbackPairs>([
-            {
-                viewabilityConfig: { viewAreaCoveragePercentThreshold: 95 },
-                onViewableItemsChanged: onViewableItemsChanged,
-            },
-        ]);
+    const viewabilityConfigCallbackPairs = useRef<ViewabilityConfigCallbackPairs>([
+        {
+            viewabilityConfig: { viewAreaCoveragePercentThreshold: 95 },
+            onViewableItemsChanged: onViewableItemsChanged,
+        },
+    ]);
 
     const imageItem = ({ item }: { item: IImgFile }) => {
         return item.paddingItem ? (
@@ -78,10 +63,10 @@ export default function ScrollViewer({
 
     useEffect(() => {
         flatListRef.current?.scrollToIndex({
-            index: currentPage,
+            index: next ? 0 : currentPage,
             animated: false,
         });
-    }, []);
+    }, [dirPath]);
 
     useEffect(() => {
         if (!isFooterDrag) return;
@@ -101,12 +86,10 @@ export default function ScrollViewer({
             <FlatList
                 data={imgs}
                 renderItem={imageItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={item => item.id.toString()}
                 ref={flatListRef}
                 showsHorizontalScrollIndicator={false}
-                viewabilityConfigCallbackPairs={
-                    viewabilityConfigCallbackPairs.current
-                }
+                viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 onScrollBeginDrag={() => {
                     setNavOpen(false);
                 }}
@@ -114,13 +97,13 @@ export default function ScrollViewer({
                     setTimeout(
                         () =>
                             flatListRef.current?.scrollToIndex({
-                                index: currentPage,
+                                index: next ? 0 : currentPage,
                                 animated: false,
                             }),
-                        100
+                        100,
                     );
                 }}
-                className='bg-white h-full'
+                className="bg-white h-full"
             />
         </TouchableOpacity>
     );

@@ -20,17 +20,15 @@ export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
     const leftButton = (
         <TouchableOpacity
             onPress={() => {
-                navigation.canGoBack()
-                    ? navigation.goBack()
-                    : navigation.navigate('Home');
+                navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Home');
             }}
         >
-            <Icon name='chevron-left' size={20} color='#9333ea'></Icon>
+            <Icon name="chevron-left" size={20} color="#9333ea"></Icon>
         </TouchableOpacity>
     );
 
     useEffect(() => {
-        AsyncStorage.getItem('scrollMode').then((val) => {
+        AsyncStorage.getItem('scrollMode').then(val => {
             setScrollMode(val === 'T');
         });
     }, []);
@@ -41,10 +39,9 @@ export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
 
     const rightButton = (
         <MenuView
-            title='뷰어 옵션'
+            title="뷰어 옵션"
             onPressAction={({ nativeEvent }) => {
-                nativeEvent.event === 'scrollModeToggle' &&
-                    setScrollMode(!isScrollMode);
+                nativeEvent.event === 'scrollModeToggle' && setScrollMode(!isScrollMode);
             }}
             actions={[
                 {
@@ -54,7 +51,7 @@ export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
             ]}
         >
             <TouchableOpacity activeOpacity={0.7}>
-                <Icon name='gear' size={25} color={'#9341f9'} />
+                <Icon name="gear" size={25} color={'#9341f9'} />
             </TouchableOpacity>
         </MenuView>
     );
@@ -63,14 +60,12 @@ export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
         <>
             <SafeAreaView
                 pointerEvents={navOpen ? 'auto' : 'none'}
-                className={`absolute top-0 w-full bg-slate-50 border-b border-gray-200 ${
-                    navOpen ? '' : 'opacity-0'
-                }`}
+                className={`absolute top-0 w-full bg-slate-50 border-b border-gray-200 ${navOpen ? '' : 'opacity-0'}`}
             >
-                <View className='w-full relative'>
+                <View className="w-full relative">
                     <Nav
                         leftButton={leftButton}
-                        title={'이름'}
+                        title={dirPathList[dirIdx].split('/').at(-1)}
                         rightButton={rightButton}
                     />
                 </View>
@@ -81,7 +76,7 @@ export default function ViewerMenu({ dirPathList, dirIdx }: TViewerMenuProp) {
                     navOpen ? '' : 'opacity-0'
                 }`}
             >
-                <View className='w-full relative'>
+                <View className="w-full relative">
                     <ViewerFooter dirPathList={dirPathList} dirIdx={dirIdx} />
                 </View>
             </SafeAreaView>

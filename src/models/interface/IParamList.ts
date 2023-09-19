@@ -6,6 +6,7 @@ export default interface IParamList extends ParamListBase {
     Viewer: {
         dirPathList: string[];
         dirIdx: number;
+        next?: boolean;
     };
     BookList: { book: IBook };
 }
