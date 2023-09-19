@@ -1,19 +1,15 @@
-import { Alert, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IParamList from '../models/interface/IParamList';
 import Nav from '../components/Nav';
 
-import IBook from '../models/interface/IBook';
 import useBook from '../hooks/useBook';
 import { useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { currentMenuState, visibleMenuState } from '../recoil/atom/navState';
 import IMenu from '../models/interface/Imenu';
-import Footer from '../components/Footer';
 import Book from '../components/Book';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AsyncKey } from '../models/enums/AsyncKey';
 import IMenuButton from '../models/interface/IMenuButton';
 
 /**

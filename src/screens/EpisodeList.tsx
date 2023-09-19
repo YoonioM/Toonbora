@@ -15,7 +15,7 @@ import IEpisode from '../models/interface/IEpisode';
  */
 
 export default function BookList({ navigation }: { navigation: NavigationProp<IParamList> }) {
-    const route = useRoute<RouteProp<IParamList, 'BookList'>>();
+    const route = useRoute<RouteProp<IParamList, 'EpisodeList'>>();
     const { book } = route.params;
 
     const { episodes } = useEpisode(book);

@@ -1,5 +1,4 @@
-import { View, Text } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import IBook from '../models/interface/IBook';
 import IEpisode from '../models/interface/IEpisode';
 import RNFS from 'react-native-fs';

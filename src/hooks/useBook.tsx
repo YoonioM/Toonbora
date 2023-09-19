@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker, { isCancel } from 'react-native-document-picker';
 import RNFS, { DocumentDirectoryPath } from 'react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IBook from '../models/interface/IBook';
 import { AsyncKey } from '../models/enums/AsyncKey';
 import axios from 'axios';
+// @ts-ignore
 import { KAKAO_REST_API_KEY } from '@env';
 
 /**
@@ -16,8 +17,6 @@ const useBook = () => {
     const [books, setBooks] = useState<IBook[]>([]);
 
     const getBooks = async () => {
-        console.log(DocumentDirectoryPath);
-        console.log(KAKAO_REST_API_KEY);
         const localBooks = await AsyncStorage.getItem(AsyncKey.Books);
         if (localBooks != null) {
             setBooks(JSON.parse(localBooks));
@@ -41,24 +40,17 @@ const useBook = () => {
     };
 
     const saveBooks = async (book: string) => {
-        AsyncStorage.setItem(AsyncKey.Books, book).catch((err) =>
-            console.error(err)
-        );
+        AsyncStorage.setItem(AsyncKey.Books, book).catch(err => console.error(err));
     };
 
     const addBook = () => {
         DocumentPicker.pickDirectory()
-            .then(async (result) => {
-                console.log(result);
-                const selectedPath = decodeURIComponent(
-                    result?.uri.substring(7, result.uri.length) as string
-                );
+            .then(async result => {
+                const selectedPath = decodeURIComponent(result?.uri.substring(7, result.uri.length) as string);
                 let pathNameList = selectedPath!.split('/');
-                let pathName = decodeURIComponent(
-                    pathNameList![pathNameList!.length - 2]
-                );
+                let pathName = decodeURIComponent(pathNameList![pathNameList!.length - 2]);
                 const thumbnail = await searchThumbnail(pathName);
-                setBooks((val) => {
+                setBooks(val => {
                     let newVal = [...val];
                     newVal.push({
                         name: pathName as string,
@@ -70,16 +62,14 @@ const useBook = () => {
                     return newVal;
                 });
             })
-            .catch((error) => {
-                Alert.alert(`${error}`);
+            .catch(error => {
+                !isCancel(error) && Alert.alert(`${error}`);
             });
     };
 
     const deleteBook = async (bookNumbers: number[]) => {
-        setBooks((val) => {
-            const newVal = val.filter(
-                (_, index) => !bookNumbers.includes(index)
-            );
+        setBooks(val => {
+            const newVal = val.filter((_, index) => !bookNumbers.includes(index));
             saveBooks(JSON.stringify(newVal));
             return newVal;
         });
@@ -87,17 +77,14 @@ const useBook = () => {
     };
 
     const searchThumbnail = async (query: string) => {
-        const { data } = await axios.get(
-            'https://dapi.kakao.com/v2/search/image',
-            {
-                headers: { Authorization: `KakaoAK ${KAKAO_REST_API_KEY}` },
-                params: {
-                    query,
-                    page: 1,
-                    size: 1,
-                },
-            }
-        );
+        const { data } = await axios.get('https://dapi.kakao.com/v2/search/image', {
+            headers: { Authorization: `KakaoAK ${KAKAO_REST_API_KEY}` },
+            params: {
+                query,
+                page: 1,
+                size: 1,
+            },
+        });
 
         if (data.documents[0]) {
             return data.documents[0].image_url;
@@ -107,7 +94,6 @@ const useBook = () => {
     };
 
     const changeThumbnail = (idx: number) => {
-        console.log(idx);
         Alert.prompt(
             '표지를 찾을 검색어를 입력해 주세요.',
             '',
@@ -119,11 +105,10 @@ const useBook = () => {
                 {
                     text: '찾기',
                     style: 'default',
-                    onPress: async (text) => {
+                    onPress: async text => {
                         if (text != null && text.length > 0) {
-                            console.log(text);
                             const thumbnail = await searchThumbnail(text);
-                            setBooks((val) => {
+                            setBooks(val => {
                                 const newVal = [...val];
                                 const newObj = { ...newVal[idx] };
                                 newObj.thumbnail = thumbnail;
@@ -140,7 +125,7 @@ const useBook = () => {
             ],
             'plain-text', // Optional input type: 'plain-text', 'secure-text', or 'numeric'
             '', // Optional default value
-            'default' // Optional cancel button title)
+            'default', // Optional cancel button title)
         );
     };
 

@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IBook from '../models/interface/IBook';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { currentMenuState } from '../recoil/atom/navState';
 import { useRecoilValue } from 'recoil';
-import useBook from '../hooks/useBook';
+import IParamList from '../models/interface/IParamList';
 
 type Props = {
     book: IBook;
@@ -17,7 +17,7 @@ type Props = {
 const Book = ({ book, idx, setSelectedBookNumbers, changeThumbnail }: Props) => {
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const currentMenu = useRecoilValue(currentMenuState);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<IParamList>>();
 
     useEffect(() => {
         if (isSelected) {
@@ -87,7 +87,7 @@ const Book = ({ book, idx, setSelectedBookNumbers, changeThumbnail }: Props) => 
     );
 };
 
-const CheckBox = ({ isSelected }: { selected: boolean }) => {
+const CheckBox = ({ isSelected }: { isSelected: boolean }) => {
     return (
         <View className="absolute top-1/2 left-11 z-20">
             {isSelected ? (

@@ -8,5 +8,5 @@ export default interface IParamList extends ParamListBase {
         dirIdx: number;
         next?: boolean;
     };
-    BookList: { book: IBook };
+    EpisodeList: { book: IBook };
 }
