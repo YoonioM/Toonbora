@@ -68,7 +68,7 @@ export default function BookList({ navigation }: { navigation: NavigationProp<IP
                     </View>
                     <Text className="ml-5 text-base">{item.name}</Text>
                     <View className="ml-auto mr-5">
-                        <Icon name="bookmark-outline" size={30} color="#9333ea" />
+                        {/* <Icon name="bookmark-outline" size={30} color="#9333ea" /> */}
                     </View>
                 </View>
                 <View className="w-11/12 m-auto border-b border-slate-300"></View>
