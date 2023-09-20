@@ -22,12 +22,14 @@ const Nav = ({ leftButton, title, rightButton, menus }: Props) => {
                     height: 40,
                 }}
             >
-                <View className="absolute flex-row w-full pb-1.5 px-5 items-center justify-between">
+                <View className="absolute flex-row w-full pb-1.5 px-5 items-center justify-between z-10">
                     <View className="">{leftButton}</View>
                     <View className="">{rightButton}</View>
                 </View>
-                <View className="mx-auto">
-                    <Text className="text-center text-base text-purple-600">{title}</Text>
+                <View className="mx-auto overflow-hidden w-9/12">
+                    <Text className="text-center text-base text-purple-600" numberOfLines={1} ellipsizeMode="tail">
+                        {title}
+                    </Text>
                 </View>
             </View>
             {visibleMenu && menus && <Menu menus={menus} />}
