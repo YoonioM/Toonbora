@@ -10,8 +10,9 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 interface IPageRef {
     currentPage: number;
     totalPage: number;
-    changedPage: number;
-    isMoving: boolean;
+    dragStartPage: number;
+    delay: boolean;
+    width: number;
 }
 
 type TViewerFooterProp = Pick<IParamList['Viewer'], 'dirPathList' | 'dirIdx'>;
@@ -25,8 +26,9 @@ export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp)
     const pageRef = useRef<IPageRef>({
         currentPage: 1,
         totalPage: 1,
-        changedPage: 0,
-        isMoving: false,
+        dragStartPage: 1,
+        delay: true,
+        width: 0,
     });
 
     const panResponder = useRef<PanResponderInstance>(
@@ -34,22 +36,31 @@ export default function ViewerFooter({ dirPathList, dirIdx }: TViewerFooterProp)
             onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
-                pageRef.current.changedPage = 0;
-                setDrag(true);
-            },
-            onPanResponderMove(e, gestureState) {
                 container.current?.measure((x, y, w) => {
-                    const { currentPage: current, totalPage: total, changedPage } = pageRef.current;
-                    const onePageWidth = w / total;
-                    const plusPage = Math.round(gestureState.dx / onePageWidth) - changedPage;
-                    if (plusPage !== 0) {
-                        const toPage = current + plusPage;
-                        setCurrentPage(toPage < 1 ? 1 : toPage > total ? total : toPage);
-                        pageRef.current.changedPage += plusPage;
-                    }
+                    pageRef.current.width = w;
+                    pageRef.current.dragStartPage = pageRef.current.currentPage;
+                    setDrag(true);
                 });
+                setTimeout(() => {
+                    pageRef.current.delay = false;
+                }, 33);
+            },
+            onPanResponderMove(_, gestureState) {
+                const { width, delay, totalPage: total, dragStartPage } = pageRef.current;
+                if (delay || !width) return;
+                pageRef.current.delay = true;
+                const onePageWidth = width / total;
+                const toPage = dragStartPage + Math.round(gestureState.dx / onePageWidth);
+                if (toPage !== 0) {
+                    setCurrentPage(toPage < 1 ? 1 : toPage > total ? total : toPage);
+                }
+                setTimeout(() => {
+                    pageRef.current.delay = false;
+                }, 33);
             },
             onPanResponderEnd: () => {
+                pageRef.current.width = 0;
+                pageRef.current.delay = true;
                 setDrag(false);
             },
         }),
